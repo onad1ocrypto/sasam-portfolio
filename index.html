@@ -393,6 +393,117 @@
     .list-url{ max-width:100%; }
     .statusbar-left span:nth-child(n+3), .statusbar-right span:nth-child(3){ display:none; }
   }
+
+  .add-project-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 16px;
+    margin:6px 0 2px;
+    cursor:pointer;
+    font-size:12.5px;
+    color:var(--cyan);
+    border:1px dashed var(--border);
+    border-radius:4px;
+    margin-left:12px;
+    margin-right:12px;
+  }
+  .add-project-row:hover{ background:var(--bg-hover); border-color:var(--cyan); }
+
+  .modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(4,5,8,.72);
+    backdrop-filter:blur(4px);
+    z-index:50;
+    align-items:center;
+    justify-content:center;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-box{
+    width:min(420px, 90vw);
+    background:#0d1017;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:22px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .modal-title{
+    color:var(--text-bright);
+    font-size:15px;
+    font-weight:700;
+    margin-bottom:4px;
+  }
+  .modal-sub{
+    color:var(--text-dim);
+    font-size:11.5px;
+    font-family:var(--sans);
+    margin-bottom:16px;
+  }
+  .modal-field{ margin-bottom:12px; }
+  .modal-field label{
+    display:block;
+    font-size:11px;
+    color:var(--text-dim);
+    margin-bottom:5px;
+    font-family:var(--sans);
+  }
+  .modal-field input, .modal-field select{
+    width:100%;
+    background:#080a0e;
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:9px 10px;
+    color:var(--text-bright);
+    font-family:var(--mono);
+    font-size:12.5px;
+    outline:none;
+  }
+  .modal-field input:focus, .modal-field select:focus{ border-color:var(--blue); }
+  .modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:18px;
+  }
+  .modal-btn{
+    padding:8px 16px;
+    border-radius:4px;
+    font-size:12.5px;
+    font-family:var(--sans);
+    font-weight:600;
+    border:none;
+  }
+  .modal-btn.cancel{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-main);
+  }
+  .modal-btn.confirm{
+    background:var(--blue);
+    color:var(--bg-app);
+  }
+  .modal-error{
+    color:var(--pink);
+    font-size:11px;
+    font-family:var(--sans);
+    margin-top:-6px;
+    margin-bottom:10px;
+    display:none;
+  }
+  .list-remove{
+    flex:0 0 auto;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    border-radius:4px;
+    width:26px;
+    height:26px;
+    font-size:13px;
+    margin-left:6px;
+  }
+  .list-remove:hover{ color:var(--pink); border-color:var(--pink); }
 </style>
 </head>
 <body>
@@ -437,6 +548,7 @@
           <div class="file" data-file="games">
             <span class="file-icon">🎮</span> games.js
           </div>
+          <div class="add-project-row" data-add-category="games">＋ Add game</div>
         </div>
       </div>
 
@@ -448,6 +560,7 @@
           <div class="file" data-file="tools">
             <span class="file-icon">🌐</span> tools.js
           </div>
+          <div class="add-project-row" data-add-category="tools">＋ Add web app / tool</div>
         </div>
       </div>
 
@@ -474,6 +587,26 @@
       </div>
     </div>
 
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-title" id="modalTitle">Add new project</div>
+      <div class="modal-sub" id="modalSub">This gets saved in your browser and shows up in the list below.</div>
+      <div class="modal-field">
+        <label for="modalName">Project name</label>
+        <input type="text" id="modalName" placeholder="e.g. Neon Racer">
+      </div>
+      <div class="modal-field">
+        <label for="modalUrl">Project URL</label>
+        <input type="text" id="modalUrl" placeholder="https://your-project.vercel.app/">
+      </div>
+      <div class="modal-error" id="modalError">Please fill in both fields with a valid URL.</div>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" id="modalCancel">Cancel</button>
+        <button class="modal-btn confirm" id="modalConfirm">Add project</button>
+      </div>
+    </div>
   </div>
 
   <div class="statusbar">
@@ -521,6 +654,33 @@ const tools = [
   { name: "Wallet Intelligence Dashboard", url: "https://wallet-intelligence-dashboard-mu.vercel.app/" },
 ];
 
+/* ---------- custom projects (saved in this browser via localStorage) ---------- */
+const STORAGE_KEY = "sasam_portfolio_custom_projects_v1";
+
+function loadCustomProjects(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return { games: [], tools: [] };
+    const parsed = JSON.parse(raw);
+    return { games: parsed.games || [], tools: parsed.tools || [] };
+  }catch(e){
+    return { games: [], tools: [] };
+  }
+}
+
+function saveCustomProjects(data){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+let customProjects = loadCustomProjects();
+
+function getGamesList(){
+  return [...games, ...customProjects.games.map(g => ({...g, custom:true}))];
+}
+function getToolsList(){
+  return [...tools, ...customProjects.tools.map(t => ({...t, custom:true}))];
+}
+
 const files = {
 
   about: {
@@ -534,7 +694,7 @@ const files = {
       `&nbsp;&nbsp;<span class="prop">role</span><span class="punc">:</span> <span class="str">"Indie builder / creative coder"</span><span class="punc">,</span>`,
       `&nbsp;&nbsp;<span class="prop">stack</span><span class="punc">:</span> <span class="punc">[</span><span class="str">"JavaScript"</span><span class="punc">,</span> <span class="str">"Three.js"</span><span class="punc">,</span> <span class="str">"WebGL"</span><span class="punc">,</span> <span class="str">"Web Audio API"</span><span class="punc">,</span> <span class="str">"Canvas 2D"</span><span class="punc">]</span><span class="punc">,</span>`,
       `&nbsp;&nbsp;<span class="prop">philosophy</span><span class="punc">:</span> <span class="str">"one self-contained HTML file beats a whole framework"</span><span class="punc">,</span>`,
-      `&nbsp;&nbsp;<span class="prop">shipped</span><span class="punc">:</span> <span class="num">${games.length + tools.length}</span> <span class="cm">// games + web apps, and counting</span>`,
+      `&nbsp;&nbsp;<span class="prop">shipped</span><span class="punc">:</span> <span class="num">${getGamesList().length + getToolsList().length}</span> <span class="cm">// games + web apps, and counting</span>`,
       `<span class="punc">};</span>`,
       ``,
       `<span class="fn">console</span><span class="punc">.</span><span class="fn">log</span><span class="punc">(</span><span class="str">\`Hi, I'm \${dev.name} — I build games, tools and visual toys\`</span><span class="punc">)</span><span class="punc">;</span>`,
@@ -578,27 +738,30 @@ const files = {
 
   games: {
     tab: "games.js", lang: "JavaScript", icon: "🎮",
-    lines: buildListFile("games", games)
+    get lines(){ return buildListFile("games", getGamesList(), "games"); }
   },
 
   tools: {
     tab: "tools.js", lang: "JavaScript", icon: "🌐",
-    lines: buildListFile("tools", tools)
+    get lines(){ return buildListFile("tools", getToolsList(), "tools"); }
   },
 };
 
-function buildListFile(varName, items){
+function buildListFile(varName, items, category){
   const header = [
     `<span class="cm">// ${varName}/ — everything shipped and live, no build step</span>`,
     `<span class="kw">const</span> <span class="prop">${varName}</span> <span class="punc">=</span> <span class="punc">[</span>`,
   ];
-  const rows = items.map(item => listRow(item));
+  const rows = items.map(item => listRow(item, category));
   const footer = [`<span class="punc">];</span>`];
   return [...header, ...rows, ...footer];
 }
 
-function listRow(item){
+function listRow(item, category){
   const displayUrl = item.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const removeBtn = item.custom
+    ? `<button class="list-remove" data-remove-category="${category}" data-remove-id="${item.id}" title="Remove">✕</button>`
+    : '';
   return `<div class="list-row">
       <div class="list-row-left">
         <span class="list-idx">${'{ }'}</span>
@@ -606,6 +769,7 @@ function listRow(item){
         <span class="list-url">${displayUrl}</span>
       </div>
       <a class="list-link" href="${item.url}" target="_blank" rel="noopener">▶ Open</a>
+      ${removeBtn}
     </div>`;
 }
 
@@ -649,6 +813,59 @@ function openFile(key){
 
 document.querySelectorAll('[data-file]').forEach(el => {
   el.addEventListener('click', () => openFile(el.dataset.file));
+});
+
+/* ---------- add / remove project ---------- */
+const modalOverlay = document.getElementById('modalOverlay');
+const modalTitle = document.getElementById('modalTitle');
+const modalName = document.getElementById('modalName');
+const modalUrl = document.getElementById('modalUrl');
+const modalError = document.getElementById('modalError');
+const modalConfirm = document.getElementById('modalConfirm');
+const modalCancel = document.getElementById('modalCancel');
+let modalCategory = 'games';
+
+function openModal(category){
+  modalCategory = category;
+  modalTitle.textContent = category === 'games' ? 'Add new game' : 'Add new web app / tool';
+  modalName.value = '';
+  modalUrl.value = '';
+  modalError.style.display = 'none';
+  modalOverlay.classList.add('show');
+  setTimeout(() => modalName.focus(), 50);
+  closeMobileSidebar();
+}
+function closeModal(){ modalOverlay.classList.remove('show'); }
+
+document.querySelectorAll('[data-add-category]').forEach(el => {
+  el.addEventListener('click', (e) => { e.stopPropagation(); openModal(el.dataset.addCategory); });
+});
+modalCancel.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) closeModal(); });
+
+modalConfirm.addEventListener('click', () => {
+  const name = modalName.value.trim();
+  let url = modalUrl.value.trim();
+  const urlOk = /^https?:\/\/.+\..+/.test(url);
+  if(!name || !urlOk){
+    modalError.style.display = 'block';
+    return;
+  }
+  const entry = { id: 'c' + Date.now(), name, url };
+  customProjects[modalCategory].push(entry);
+  saveCustomProjects(customProjects);
+  closeModal();
+  openFile(modalCategory);
+});
+
+document.getElementById('code').addEventListener('click', (e) => {
+  const btn = e.target.closest('.list-remove');
+  if(!btn) return;
+  const category = btn.dataset.removeCategory;
+  const id = btn.dataset.removeId;
+  customProjects[category] = customProjects[category].filter(p => p.id !== id);
+  saveCustomProjects(customProjects);
+  render();
 });
 
 tabbarEl.addEventListener('click', (e) => {
