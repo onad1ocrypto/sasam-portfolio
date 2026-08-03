@@ -409,6 +409,12 @@
     margin-right:12px;
   }
   .add-project-row:hover{ background:var(--bg-hover); border-color:var(--cyan); }
+  .admin-only{ display:none; }
+  body.is-admin .admin-only{ display:flex; }
+  .list-remove.admin-only{ display:none; }
+  body.is-admin .list-remove.admin-only{ display:inline-block; }
+  #adminLoginBtn{ cursor:pointer; }
+  #adminLoginBtn.logged-in{ color:var(--cyan); }
 
   .modal-overlay{
     display:none;
@@ -505,6 +511,7 @@
   }
   .list-remove:hover{ color:var(--pink); border-color:var(--pink); }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
@@ -548,7 +555,7 @@
           <div class="file" data-file="games">
             <span class="file-icon">🎮</span> games.js
           </div>
-          <div class="add-project-row" data-add-category="games">＋ Add game</div>
+          <div class="add-project-row admin-only" data-add-category="games">＋ Add game</div>
         </div>
       </div>
 
@@ -560,7 +567,7 @@
           <div class="file" data-file="tools">
             <span class="file-icon">🌐</span> tools.js
           </div>
-          <div class="add-project-row" data-add-category="tools">＋ Add web app / tool</div>
+          <div class="add-project-row admin-only" data-add-category="tools">＋ Add web app / tool</div>
         </div>
       </div>
 
@@ -616,6 +623,7 @@
       <span id="statusLines">14 lines</span>
     </div>
     <div class="statusbar-right">
+      <span id="adminLoginBtn">🔐 Admin</span>
       <span>UTF-8</span>
       <span id="statusLang">JavaScript</span>
       <span id="clock">--:--</span>
@@ -654,25 +662,78 @@ const tools = [
   { name: "Wallet Intelligence Dashboard", url: "https://wallet-intelligence-dashboard-mu.vercel.app/" },
 ];
 
-/* ---------- custom projects (saved in this browser via localStorage) ---------- */
-const STORAGE_KEY = "sasam_portfolio_custom_projects_v1";
+/* ---------- custom projects (saved in Supabase, visible to everyone) ---------- */
+/* TODO: fill these in from your Supabase project settings (Project Settings -> API) */
+const SUPABASE_URL = "https://sjxgjpeewrtzqfcycjsa.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqeGdqcGVld3J0enFmY3ljanNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjczNzcsImV4cCI6MjEwMTM0MzM3N30.N3ib1G65viFUu2_nFYcEQDi6UeOG5iCagXNPlaft5LA";
 
-function loadCustomProjects(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return { games: [], tools: [] };
-    const parsed = JSON.parse(raw);
-    return { games: parsed.games || [], tools: parsed.tools || [] };
-  }catch(e){
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let customProjects = { games: [], tools: [] };
+let isAdmin = false;
+
+async function fetchCustomProjects(){
+  const { data, error } = await sb
+    .from('portfolio_projects')
+    .select('*')
+    .order('created_at', { ascending: true });
+  if(error){
+    console.error('Failed to load projects from Supabase:', error);
     return { games: [], tools: [] };
   }
+  const result = { games: [], tools: [] };
+  (data || []).forEach(row => {
+    if(!result[row.category]) result[row.category] = [];
+    result[row.category].push({ id: row.id, name: row.name, url: row.url, custom: true });
+  });
+  return result;
 }
 
-function saveCustomProjects(data){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+async function addCustomProject(category, name, url){
+  const { data, error } = await sb
+    .from('portfolio_projects')
+    .insert({ category, name, url })
+    .select()
+    .single();
+  if(error) throw error;
+  return { id: data.id, name: data.name, url: data.url, custom: true };
 }
 
-let customProjects = loadCustomProjects();
+async function removeCustomProject(id){
+  const { error } = await sb.from('portfolio_projects').delete().eq('id', id);
+  if(error) throw error;
+}
+
+function setAdminUI(loggedIn){
+  isAdmin = loggedIn;
+  document.body.classList.toggle('is-admin', loggedIn);
+  const btn = document.getElementById('adminLoginBtn');
+  btn.textContent = loggedIn ? '🔓 Admin (logged in)' : '🔐 Admin';
+  btn.classList.toggle('logged-in', loggedIn);
+}
+
+async function initAuth(){
+  const { data: { session } } = await sb.auth.getSession();
+  setAdminUI(!!session);
+  sb.auth.onAuthStateChange((_event, session) => setAdminUI(!!session));
+}
+
+document.getElementById('adminLoginBtn').addEventListener('click', async () => {
+  if(isAdmin){
+    if(confirm('Log out of admin mode?')){
+      await sb.auth.signOut();
+    }
+    return;
+  }
+  const email = prompt('Admin email:');
+  if(!email) return;
+  const password = prompt('Admin password:');
+  if(!password) return;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if(error){
+    alert('Login failed: ' + error.message);
+  }
+});
 
 function getGamesList(){
   return [...games, ...customProjects.games.map(g => ({...g, custom:true}))];
@@ -685,7 +746,7 @@ const files = {
 
   about: {
     tab: "about.js", lang: "JavaScript", icon: "📄",
-    lines: [
+    get lines(){ return [
       `<span class="cm">// SASAM.dev — building weird & fun things for the browser</span>`,
       `<span class="cm">// no backend, no build step — just code that ships as one .html file</span>`,
       ``,
@@ -701,7 +762,7 @@ const files = {
       `<span class="fn">console</span><span class="punc">.</span><span class="fn">log</span><span class="punc">(</span><span class="str">"that live as a single browser tab. Open a folder on the left to explore."</span><span class="punc">)</span><span class="punc">;</span><span class="cursor-blink"></span>`,
       ``,
       `<span class="kw">export</span> <span class="kw">default</span> <span class="prop">dev</span><span class="punc">;</span>`,
-    ]
+    ]; }
   },
 
   contact: {
@@ -760,7 +821,7 @@ function buildListFile(varName, items, category){
 function listRow(item, category){
   const displayUrl = item.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
   const removeBtn = item.custom
-    ? `<button class="list-remove" data-remove-category="${category}" data-remove-id="${item.id}" title="Remove">✕</button>`
+    ? `<button class="list-remove admin-only" data-remove-category="${category}" data-remove-id="${item.id}" title="Remove">✕</button>`
     : '';
   return `<div class="list-row">
       <div class="list-row-left">
@@ -843,7 +904,7 @@ document.querySelectorAll('[data-add-category]').forEach(el => {
 modalCancel.addEventListener('click', closeModal);
 modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) closeModal(); });
 
-modalConfirm.addEventListener('click', () => {
+modalConfirm.addEventListener('click', async () => {
   const name = modalName.value.trim();
   let url = modalUrl.value.trim();
   const urlOk = /^https?:\/\/.+\..+/.test(url);
@@ -851,21 +912,34 @@ modalConfirm.addEventListener('click', () => {
     modalError.style.display = 'block';
     return;
   }
-  const entry = { id: 'c' + Date.now(), name, url };
-  customProjects[modalCategory].push(entry);
-  saveCustomProjects(customProjects);
-  closeModal();
-  openFile(modalCategory);
+  modalConfirm.disabled = true;
+  try{
+    const entry = await addCustomProject(modalCategory, name, url);
+    customProjects[modalCategory].push(entry);
+    closeModal();
+    openFile(modalCategory);
+  }catch(e){
+    modalError.textContent = 'Failed to save: ' + e.message;
+    modalError.style.display = 'block';
+  }finally{
+    modalConfirm.disabled = false;
+  }
 });
 
-document.getElementById('code').addEventListener('click', (e) => {
+document.getElementById('code').addEventListener('click', async (e) => {
   const btn = e.target.closest('.list-remove');
-  if(!btn) return;
+  if(!btn || !isAdmin) return;
   const category = btn.dataset.removeCategory;
   const id = btn.dataset.removeId;
-  customProjects[category] = customProjects[category].filter(p => p.id !== id);
-  saveCustomProjects(customProjects);
-  render();
+  btn.disabled = true;
+  try{
+    await removeCustomProject(id);
+    customProjects[category] = customProjects[category].filter(p => p.id !== id);
+    render();
+  }catch(e){
+    alert('Failed to remove: ' + e.message);
+    btn.disabled = false;
+  }
 });
 
 tabbarEl.addEventListener('click', (e) => {
@@ -909,7 +983,12 @@ function tickClock(){
 tickClock();
 setInterval(tickClock, 1000 * 10);
 
-render();
+(async function bootstrap(){
+  render(); // show static content immediately
+  await initAuth();
+  customProjects = await fetchCustomProjects();
+  render();
+})();
 </script>
 
 </body>
