@@ -139,6 +139,13 @@
     display:flex; align-items:center; justify-content:center; font-size:44px;
     background:repeating-linear-gradient(135deg, var(--cream-2), var(--cream-2) 14px, #fff 14px, #fff 28px);
   }
+  .edit-thumb-btn{
+    display:none; position:absolute; bottom:8px; right:8px; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:9px; border:2.5px solid var(--ink); background:#fff; cursor:pointer;
+    font-size:14px; box-shadow:2px 2px 0 var(--ink); transition:all .15s; z-index:2;
+  }
+  body.is-admin .edit-thumb-btn{ display:flex; }
+  .edit-thumb-btn:hover{ background:var(--yellow); transform:translate(-2px,-2px); box-shadow:4px 4px 0 var(--ink); }
   .grid .card:nth-child(3n+1){ transform:rotate(-1.4deg); }
   .grid .card:nth-child(3n+2){ transform:rotate(1.2deg); }
   .grid .card:nth-child(3n){ transform:rotate(-0.6deg); }
@@ -307,6 +314,18 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="thumbOverlay">
+  <div class="modal">
+    <h3>🖼️ Change thumbnail</h3>
+    <div class="field"><label>IMAGE FILE</label><input type="file" id="thumbFile" accept="image/*"></div>
+    <div class="modal-error" id="thumbError">Upload failed.</div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="thumbCancel">cancel</button>
+      <button class="modal-btn confirm" id="thumbConfirm">save</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="loginOverlay">
   <div class="modal">
     <h3>🔐 Admin login</h3>
@@ -386,6 +405,24 @@ async function uploadProjectImage(file){
   const { data } = sb.storage.from('project-images').getPublicUrl(path);
   return data.publicUrl;
 }
+
+/* ---------- thumbnail overrides (lets admin set/replace an image on ANY project, including built-ins) ---------- */
+let thumbnailOverrides = {};
+function slugify(category, item){
+  const base = item.custom ? `custom-${item.id}` : item.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  return `${category}:${base}`;
+}
+async function fetchThumbnailOverrides(){
+  const { data, error } = await sb.from('project_thumbnails').select('*');
+  if(error){ console.error('Thumbnail load error:', error); return {}; }
+  const map = {};
+  (data || []).forEach(r => { map[r.slug] = r.image_url; });
+  return map;
+}
+async function setThumbnailOverride(slug, imageUrl){
+  const { error } = await sb.from('project_thumbnails').upsert({ slug, image_url: imageUrl, updated_at: new Date().toISOString() });
+  if(error) throw error;
+}
 async function removeCustomProject(id){
   const { error } = await sb.from('portfolio_projects').delete().eq('id', id);
   if(error) throw error;
@@ -397,10 +434,11 @@ function getToolsList(){ return [...tools, ...customProjects.tools]; }
 function cardHTML(item, category, idx){
   const displayUrl = item.url.replace(/^https?:\/\//,'').replace(/\/$/,'');
   const removeBtn = item.custom ? `<button class="remove-btn" data-remove-category="${category}" data-remove-id="${item.id}" title="Remove">✕</button>` : '';
-  const img = item.image_url || item.image;
+  const slug = slugify(category, item);
+  const img = thumbnailOverrides[slug] || item.image_url || item.image;
   const thumb = img
-    ? `<div class="card-thumb"><img src="${img}" alt="${item.name}" loading="lazy"></div>`
-    : `<div class="card-thumb placeholder-thumb">${category==='games' ? '🎮' : '🛠️'}</div>`;
+    ? `<div class="card-thumb" data-slug="${slug}"><img src="${img}" alt="${item.name}" loading="lazy"><button class="edit-thumb-btn" data-slug="${slug}" title="Change thumbnail">✎</button></div>`
+    : `<div class="card-thumb placeholder-thumb" data-slug="${slug}">${category==='games' ? '🎮' : '🛠️'}<button class="edit-thumb-btn" data-slug="${slug}" title="Change thumbnail">✎</button></div>`;
   return `<div class="card reveal visible">
     ${thumb}
     <div class="card-body">
@@ -446,6 +484,13 @@ function bindCardEvents(){
       }catch(e){ alert('Failed to remove: ' + e.message); btn.disabled = false; }
     });
   });
+  document.querySelectorAll('.edit-thumb-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      if(!isAdmin) return;
+      openThumbModal(btn.dataset.slug);
+    });
+  });
 }
 
 /* ---------- add project modal ---------- */
@@ -486,6 +531,36 @@ modalConfirm.addEventListener('click', async (e)=>{
     reactBlob();
   }catch(err){ modalError.textContent = 'Failed to save: ' + err.message; modalError.style.display='block'; }
   finally{ modalConfirm.disabled = false; modalConfirm.textContent = originalLabel; }
+});
+
+/* ---------- edit thumbnail modal (works on ANY card, including built-in ones) ---------- */
+const thumbOverlay = document.getElementById('thumbOverlay');
+const thumbFile = document.getElementById('thumbFile');
+const thumbError = document.getElementById('thumbError');
+const thumbConfirm = document.getElementById('thumbConfirm');
+let thumbSlug = null;
+function openThumbModal(slug){
+  thumbSlug = slug;
+  thumbFile.value = '';
+  thumbError.style.display = 'none';
+  thumbOverlay.classList.add('show');
+}
+document.getElementById('thumbCancel').addEventListener('click', ()=>thumbOverlay.classList.remove('show'));
+thumbOverlay.addEventListener('click', e=>{ if(e.target===thumbOverlay) thumbOverlay.classList.remove('show'); });
+thumbConfirm.addEventListener('click', async ()=>{
+  const file = thumbFile.files[0];
+  if(!file){ thumbError.textContent = 'Choose an image file first.'; thumbError.style.display = 'block'; return; }
+  thumbConfirm.disabled = true;
+  const originalLabel = thumbConfirm.textContent;
+  thumbConfirm.textContent = 'uploading...';
+  try{
+    const url = await uploadProjectImage(file);
+    await setThumbnailOverride(thumbSlug, url);
+    thumbnailOverrides[thumbSlug] = url;
+    thumbOverlay.classList.remove('show');
+    renderProjects();
+  }catch(e){ thumbError.textContent = 'Upload failed: ' + e.message; thumbError.style.display = 'block'; }
+  finally{ thumbConfirm.disabled = false; thumbConfirm.textContent = originalLabel; }
 });
 
 /* ---------- admin auth ---------- */
@@ -532,11 +607,11 @@ let excitedTimer = null;
 function reactBlob(){
   blobWrap.classList.add('excited');
   document.getElementById('speechBubble').textContent = bubbleMsgs[Math.floor(Math.random()*bubbleMsgs.length)];
-  if(blobVideo){ blobVideo.muted = false; blobVideo.playbackRate = 1.4; }
+  if(blobVideo){ blobVideo.playbackRate = 1.4; }
   clearTimeout(excitedTimer);
   excitedTimer = setTimeout(()=>{
     blobWrap.classList.remove('excited');
-    if(blobVideo){ blobVideo.muted = true; blobVideo.playbackRate = 1; }
+    if(blobVideo){ blobVideo.playbackRate = 1; }
   }, 1400);
 }
 blobWrap.addEventListener('click', reactBlob);
@@ -587,7 +662,9 @@ spawnDoodles();
 
 (async function bootstrap(){
   await initAuth();
-  customProjects = await fetchCustomProjects();
+  const [projects, overrides] = await Promise.all([fetchCustomProjects(), fetchThumbnailOverrides()]);
+  customProjects = projects;
+  thumbnailOverrides = overrides;
   renderProjects();
   observeReveals();
 })();
