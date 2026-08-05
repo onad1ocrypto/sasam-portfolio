@@ -32,6 +32,20 @@
 
   /* floating doodles */
   #doodles{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+
+  /* hanging rope cats */
+  .rope-cat-wrap{ position:fixed; top:0; z-index:40; display:flex; flex-direction:column; align-items:center; cursor:pointer; animation:ropeSwing 4.5s ease-in-out infinite; transform-origin:top center; }
+  .rope-cat-wrap.left{ left:14px; animation-delay:0s; }
+  .rope-cat-wrap.right{ right:14px; animation-delay:-2.2s; }
+  @keyframes ropeSwing{ 0%,100%{ transform:rotate(-4deg);} 50%{ transform:rotate(4deg);} }
+  .rope-thread{ width:3px; height:26px; background:repeating-linear-gradient(180deg, #a9835a 0 4px, #8a6741 4px 8px); }
+  .rope-cat-frame{
+    width:64px; height:64px; border-radius:16px; border:3px solid var(--ink); overflow:hidden;
+    box-shadow:3px 3px 0 var(--ink); background:#bcdcf0; transition:transform .2s;
+  }
+  .rope-cat-wrap:hover .rope-cat-frame{ transform:scale(1.08); }
+  .rope-cat-frame video{ width:100%; height:100%; object-fit:cover; display:block; }
+  @media (max-width:820px){ .rope-cat-wrap{ display:none; } }
   .doodle{ position:absolute; font-size:28px; opacity:0.55; animation:floaty linear infinite, wobble ease-in-out infinite; user-select:none; }
   @keyframes floaty{ 0%{ transform:translateY(0);} 50%{ transform:translateY(-40px);} 100%{ transform:translateY(0);} }
   @keyframes wobble{ 0%,100%{ rotate:-12deg;} 50%{ rotate:12deg;} }
@@ -220,6 +234,15 @@
 <body>
 
 <div id="doodles"></div>
+
+<div class="rope-cat-wrap left" id="ropeCatLeft" title="hi!">
+  <div class="rope-thread"></div>
+  <div class="rope-cat-frame"><video src="cat-left.mp4" autoplay muted loop playsinline></video></div>
+</div>
+<div class="rope-cat-wrap right" id="ropeCatRight" title="hi!">
+  <div class="rope-thread"></div>
+  <div class="rope-cat-frame"><video src="cat-right.mp4" autoplay muted loop playsinline></video></div>
+</div>
 
 <div class="wrap">
   <nav>
@@ -726,6 +749,16 @@ function reactBlob(){
   }, 1400);
 }
 blobWrap.addEventListener('click', reactBlob);
+
+/* ---------- rope cats: click = little speed boost + wiggle ---------- */
+document.querySelectorAll('.rope-cat-wrap').forEach(wrap=>{
+  wrap.addEventListener('click', ()=>{
+    const vid = wrap.querySelector('video');
+    if(vid){ vid.playbackRate = 2.2; setTimeout(()=>{ vid.playbackRate = 1; }, 900); }
+    wrap.style.animationDuration = '0.5s';
+    setTimeout(()=>{ wrap.style.animationDuration = '4.5s'; }, 900);
+  });
+});
 
 /* ---------- confetti burst ---------- */
 const confettiColors = ['#FF6FA5','#5EC8FF','#FFD93D','#3FE0A0','#B98CFF'];
