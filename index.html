@@ -175,6 +175,7 @@
   body.is-admin .add-card{ display:flex; }
   .add-card:hover{ background:var(--mint); transform:rotate(-1deg) scale(1.02); }
   .add-card .plus{ font-size:30px; font-family:var(--display); }
+  .win-desc{ font-size:13px; font-weight:500; opacity:0.8; margin-top:8px; line-height:1.5; }
 
   .skill-groups{ display:flex; flex-direction:column; gap:16px; }
   .skill-group{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; padding:14px 0; border-bottom:2.5px dashed var(--ink); }
@@ -224,7 +225,7 @@
   <nav>
     <a href="#top" class="logo"><span class="wave">🌈</span>SASAM</a>
     <div class="nav-links">
-      <a href="#about">About</a><a href="#games">Games</a><a href="#tools">Tools</a><a href="#contact">Contact</a>
+      <a href="#about">About</a><a href="#games">Games</a><a href="#tools">Tools</a><a href="#wins">Wins</a><a href="#contact">Contact</a>
     </div>
     <button id="adminBtn">🔐 admin</button>
   </nav>
@@ -252,11 +253,12 @@
     <div class="about-grid">
       <div class="sticker-card about-text reveal">
         <div class="eyebrow">📄 about.js (mostly true)</div>
-        <p>I'm <b>SASAM</b> — I design and ship tiny, self-contained experiences: arcade games,
+        <p>I'm <b>SASAM</b> — I design and ship tiny, self-contained web experiences: arcade games,
           puzzle toys, dashboards and AI-assisted tools. Everything lives in <b>one HTML file</b>,
           deployed straight to the edge with zero ceremony.</p>
-        <p>Currently obsessed with <b>shader-driven visual polish</b> — finding out exactly how
-          much nonsense one browser tab can hold before it complains.</p>
+        <p>I also build games in <b>Godot</b>, ship contracts &amp; dapps on <b>Solana and EVM chains</b>,
+          stay deep in <b>web3</b>, and make web apps for <b>school education</b>. Yes, that's a lot
+          of unrelated things. No, I'm not stopping.</p>
         <div class="tag-row" id="stackTags"></div>
       </div>
       <div class="sticker-card philosophy-card reveal">
@@ -288,6 +290,14 @@
     <div class="sticker-card skill-groups reveal" id="skillGroups"></div>
   </section>
 
+  <section id="wins">
+    <div class="section-head reveal">
+      <h2>🏆 Hackathon loot</h2>
+      <p>Event wins, hackathon placements and other trophies I keep on a shelf.</p>
+    </div>
+    <div class="grid" id="winsGrid"></div>
+  </section>
+
   <section id="contact">
     <div class="contact-wrap reveal">
       <div class="eyebrow">📮 contact.md</div>
@@ -310,6 +320,21 @@
     <div class="modal-actions">
       <button class="modal-btn cancel" id="modalCancel">nah</button>
       <button class="modal-btn confirm" id="modalConfirm">add it!</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="winModalOverlay">
+  <div class="modal">
+    <h3>🏆 Add event win</h3>
+    <div class="field"><label>EVENT / TITLE</label><input type="text" id="winTitle" placeholder="e.g. ETHGlobal Jakarta — 1st place"></div>
+    <div class="field"><label>DESCRIPTION</label><input type="text" id="winDesc" placeholder="What you built, in one line"></div>
+    <div class="field"><label>LINK (optional)</label><input type="text" id="winLink" placeholder="https://..."></div>
+    <div class="field"><label>PHOTO</label><input type="file" id="winImage" accept="image/*"></div>
+    <div class="modal-error" id="winError">Fill in a title at least, silly.</div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="winCancel">nah</button>
+      <button class="modal-btn confirm" id="winConfirm">add trophy</button>
     </div>
   </div>
 </div>
@@ -366,14 +391,14 @@ const tools = [
   { name: "Wallet Intelligence Dashboard", url: "https://wallet-intelligence-dashboard-mu.vercel.app/", image: "" },
 ];
 
-const stack = ["JavaScript","Three.js","WebGL","Web Audio API","Canvas 2D"];
+const stack = ["JavaScript","Godot / GDScript","Solana","EVM / Solidity","Three.js","WebGL","Web Audio API"];
 const skillsData = [
-  ["languages", ["JavaScript","HTML","CSS"]],
-  ["graphics", ["Three.js","WebGL","Canvas 2D","postprocessing / bloom"]],
-  ["audio", ["Web Audio API","synthesized 8-bit SFX"]],
+  ["languages", ["JavaScript","HTML","CSS","GDScript"]],
+  ["gameDev", ["Godot Engine","Three.js","WebGL","Canvas 2D","Web Audio API","synthesized 8-bit SFX"]],
   ["gameDesign", ["puzzle","arcade / endless runner","stacking / reflex","word & match games","cozy sim"]],
-  ["toolsAndDashboards", ["AI-assisted tools","crypto / on-chain dashboards","data visualization","education apps"]],
-  ["deployment", ["Vercel","Railway"]],
+  ["web3 / blockchain", ["Solana","EVM chains","Solidity","smart contracts","dapps","on-chain dashboards"]],
+  ["toolsAndDashboards", ["AI-assisted tools","education / school web apps","data visualization","crypto dashboards"]],
+  ["deployment", ["Vercel","Railway","Supabase"]],
 ];
 /* ================================================= */
 
@@ -423,6 +448,23 @@ async function setThumbnailOverride(slug, imageUrl){
   const { error } = await sb.from('project_thumbnails').upsert({ slug, image_url: imageUrl, updated_at: new Date().toISOString() });
   if(error) throw error;
 }
+
+/* ---------- event wins (hackathons etc) ---------- */
+let wins = [];
+async function fetchWins(){
+  const { data, error } = await sb.from('event_wins').select('*').order('created_at', { ascending: false });
+  if(error){ console.error('Wins load error:', error); return []; }
+  return data || [];
+}
+async function addWin(title, description, link, imageUrl){
+  const { data, error } = await sb.from('event_wins').insert({ title, description, link: link || null, image_url: imageUrl || null }).select().single();
+  if(error) throw error;
+  return data;
+}
+async function removeWin(id){
+  const { error } = await sb.from('event_wins').delete().eq('id', id);
+  if(error) throw error;
+}
 async function removeCustomProject(id){
   const { error } = await sb.from('portfolio_projects').delete().eq('id', id);
   if(error) throw error;
@@ -461,6 +503,39 @@ function renderProjects(){
   document.getElementById('toolsGrid').innerHTML = tList.map((t,i)=>cardHTML(t,'tools',i)).join('')
     + `<div class="add-card" data-add-category="tools"><span class="plus">＋</span>add a tool</div>`;
   bindCardEvents();
+}
+
+function winCardHTML(w){
+  const thumb = w.image_url
+    ? `<div class="card-thumb"><img src="${w.image_url}" alt="${w.title}" loading="lazy"></div>`
+    : `<div class="card-thumb placeholder-thumb">🏆</div>`;
+  const removeBtn = `<button class="remove-btn" data-remove-win-id="${w.id}" title="Remove">✕</button>`;
+  const linkBtn = w.link ? `<a class="open-link" href="${w.link}" target="_blank" rel="noopener">🔗 proof</a>` : '';
+  return `<div class="card reveal visible">
+    ${thumb}
+    <div class="card-body">
+      <h3>${w.title}</h3>
+      ${w.description ? `<div class="win-desc">${w.description}</div>` : ''}
+      <div class="card-actions">${linkBtn}${removeBtn}</div>
+    </div>
+  </div>`;
+}
+function renderWins(){
+  document.getElementById('winsGrid').innerHTML = wins.map(winCardHTML).join('')
+    + `<div class="add-card" id="addWinCard"><span class="plus">＋</span>add a win</div>`;
+  const addWinCard = document.getElementById('addWinCard');
+  if(addWinCard) addWinCard.addEventListener('click', openWinModal);
+  document.querySelectorAll('[data-remove-win-id]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!isAdmin) return;
+      btn.disabled = true;
+      try{
+        await removeWin(btn.dataset.removeWinId);
+        wins = wins.filter(w=>w.id !== btn.dataset.removeWinId);
+        renderWins();
+      }catch(e){ alert('Failed to remove: ' + e.message); btn.disabled = false; }
+    });
+  });
 }
 function renderStatic(){
   document.getElementById('stackTags').innerHTML = stack.map(s=>`<span class="tag">${s}</span>`).join('');
@@ -533,6 +608,42 @@ modalConfirm.addEventListener('click', async (e)=>{
   finally{ modalConfirm.disabled = false; modalConfirm.textContent = originalLabel; }
 });
 
+/* ---------- add win modal ---------- */
+const winModalOverlay = document.getElementById('winModalOverlay');
+const winTitle = document.getElementById('winTitle');
+const winDesc = document.getElementById('winDesc');
+const winLink = document.getElementById('winLink');
+const winImage = document.getElementById('winImage');
+const winError = document.getElementById('winError');
+const winConfirm = document.getElementById('winConfirm');
+function openWinModal(){
+  winTitle.value=''; winDesc.value=''; winLink.value=''; winImage.value='';
+  winError.style.display = 'none';
+  winModalOverlay.classList.add('show');
+  setTimeout(()=>winTitle.focus(), 50);
+}
+document.getElementById('winCancel').addEventListener('click', ()=>winModalOverlay.classList.remove('show'));
+winModalOverlay.addEventListener('click', e=>{ if(e.target===winModalOverlay) winModalOverlay.classList.remove('show'); });
+winConfirm.addEventListener('click', async (e)=>{
+  const title = winTitle.value.trim();
+  if(!title){ winError.style.display = 'block'; return; }
+  winConfirm.disabled = true;
+  const originalLabel = winConfirm.textContent;
+  try{
+    let imageUrl = '';
+    const file = winImage.files[0];
+    if(file){ winConfirm.textContent = 'uploading photo...'; imageUrl = await uploadProjectImage(file); }
+    winConfirm.textContent = 'saving...';
+    const row = await addWin(title, winDesc.value.trim(), winLink.value.trim(), imageUrl);
+    wins.unshift(row);
+    winModalOverlay.classList.remove('show');
+    renderWins();
+    burstConfetti(e.clientX, e.clientY);
+    reactBlob();
+  }catch(err){ winError.textContent = 'Failed to save: ' + err.message; winError.style.display = 'block'; }
+  finally{ winConfirm.disabled = false; winConfirm.textContent = originalLabel; }
+});
+
 /* ---------- edit thumbnail modal (works on ANY card, including built-in ones) ---------- */
 const thumbOverlay = document.getElementById('thumbOverlay');
 const thumbFile = document.getElementById('thumbFile');
@@ -575,7 +686,7 @@ function setAdminUI(loggedIn){
 async function initAuth(){
   const { data: { session } } = await sb.auth.getSession();
   setAdminUI(!!session);
-  sb.auth.onAuthStateChange((_e, session) => { setAdminUI(!!session); renderProjects(); });
+  sb.auth.onAuthStateChange((_e, session) => { setAdminUI(!!session); renderProjects(); renderWins(); });
 }
 adminBtn.addEventListener('click', async ()=>{
   if(isAdmin){ if(confirm('Log out of admin mode?')) await sb.auth.signOut(); return; }
@@ -662,10 +773,12 @@ spawnDoodles();
 
 (async function bootstrap(){
   await initAuth();
-  const [projects, overrides] = await Promise.all([fetchCustomProjects(), fetchThumbnailOverrides()]);
+  const [projects, overrides, winsData] = await Promise.all([fetchCustomProjects(), fetchThumbnailOverrides(), fetchWins()]);
   customProjects = projects;
   thumbnailOverrides = overrides;
+  wins = winsData;
   renderProjects();
+  renderWins();
   observeReveals();
 })();
 </script>
