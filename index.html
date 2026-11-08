@@ -322,6 +322,18 @@
   @media(max-width:640px){#about{padding-top:35px;padding-bottom:64px}.notebook{padding:9px;border-radius:18px}.notebook-tabs{padding-left:32px}.book-tab{padding:9px 12px 10px;font-size:11px}.notebook-paper:after{left:42px}.book-binding{left:7px}.book-binding i{width:25px;height:11px}.book-sheet{padding:23px 17px 20px 58px;min-height:0}.book-stamp{font-size:9px}.profile-photo{width:74px;height:74px;border-radius:22px}.profile-intro{gap:13px}.profile-intro h3{font-size:20px}.bio-copy p{font-size:14px;line-height:1.75}.book-skill-groups .skill-group{gap:8px}.book-skill-groups .key{width:100%;min-width:0}.book-skill-groups .tag{font-size:10px;padding:4px 9px}.page-turn{font-size:11px;padding:9px 10px}.skills-doodle{font-size:33px}}
   @media(prefers-reduced-motion:reduce){.book-page.is-turning{animation:none}}
 
+
+  /* Public guestbook, designed like little notes in the notebook */
+  .guest-intro h3{font-size:clamp(22px,4vw,30px);line-height:1.2;margin:6px 0}.guest-intro p{font-size:14px;line-height:1.5;font-weight:600;opacity:.75}
+  .guest-form{margin-top:20px;padding:18px;border:2px dashed rgba(43,32,54,.28);border-radius:14px;background:rgba(255,255,255,.65)}
+  .guest-field{margin-bottom:13px}.guest-field label{display:block;margin-bottom:6px;font:700 11px var(--mono)}.guest-field label span{font-weight:400;opacity:.75}
+  .guest-field input,.guest-field textarea{width:100%;padding:10px 12px;border:2px solid #2b2036;border-radius:10px;color:#2b2036;background:#fff;font:600 14px var(--body);outline:none}.guest-field textarea{resize:vertical;min-height:80px}.guest-field input:focus,.guest-field textarea:focus{outline:3px solid var(--sky);outline-offset:2px}
+  .guest-privacy{font-size:11px;line-height:1.5;font-weight:600;opacity:.75}.guest-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:13px}.guest-submit{background:var(--mint)}.guest-submit:disabled{opacity:.6;cursor:wait;box-shadow:none}.guest-actions #guestStatus{font-size:12px;font-weight:700;line-height:1.4}
+  .guest-list-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:25px 0 12px}.guest-list-heading h4{font:700 16px var(--display)}.guest-list-heading span{font:700 10px var(--mono);opacity:.55}
+  .guest-messages{display:flex;flex-direction:column;gap:10px}.guest-note{background:#fff3c6;border:2px solid #2b2036;border-radius:12px;padding:12px 14px;box-shadow:3px 3px 0 rgba(43,32,54,.2);color:#2b2036}.guest-note-head{display:flex;gap:8px;align-items:center;justify-content:space-between}.guest-note-head strong{font:700 12px var(--mono);overflow-wrap:anywhere}.guest-note-head time{font:700 10px var(--mono);opacity:.6;white-space:nowrap}.guest-note p{font-size:14px;line-height:1.5;margin-top:7px;white-space:pre-wrap;overflow-wrap:anywhere}.guest-delete{margin-top:10px;background:transparent;border:1px solid #2b2036;border-radius:7px;padding:4px 8px;color:#2b2036;cursor:pointer;font:700 10px var(--mono)}.guest-empty{font-size:13px;opacity:.7;padding:7px 0}
+  body.dark .guest-form{background:#342d40;border-color:rgba(244,233,252,.35)}
+  @media(max-width:640px){.notebook-tabs{padding-left:10px;gap:3px}.book-tab{padding-left:8px;padding-right:8px;font-size:10px;gap:4px}.book-tab span:first-child{font-size:9px}.guest-form{padding:12px}.guest-note{padding:10px}.book-footer{gap:5px;flex-wrap:wrap}.book-footer .page-turn{font-size:10px}}
+
 </style>
 </head>
 <body>
@@ -372,6 +384,7 @@
       <div class="notebook-tabs" role="tablist" aria-label="Notebook pages">
         <button type="button" class="book-tab" id="bioTab" role="tab" aria-selected="true" aria-controls="bioPage" tabindex="0" data-book-page="bio"><span>01</span> <span id="bioTabText">About me</span></button>
         <button type="button" class="book-tab" id="skillsTab" role="tab" aria-selected="false" aria-controls="skillsPage" tabindex="-1" data-book-page="skills"><span>02</span> <span id="skillsTabText">My skills</span></button>
+        <button type="button" class="book-tab" id="guestTab" role="tab" aria-selected="false" aria-controls="guestPage" tabindex="-1" data-book-page="guest"><span>03</span> <span id="guestTabText">Guestbook</span></button>
       </div>
       <div class="notebook-paper">
         <div class="book-binding" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -385,13 +398,26 @@
               <p>Beyond Web3, I make games, web apps, and small experiments that are sometimes useful and sometimes just fun.</p>
               <p><b>Wild ideas, real code, and always another project on the way. 🚀</b></p>
             </div>
-            <div class="book-footer"><span class="page-number">01 / 02</span><button class="page-turn" type="button" data-book-go="skills"><span id="nextPageText">Next: my skills</span> <span aria-hidden="true">→</span></button></div>
+            <div class="book-footer"><span class="page-number">01 / 03</span><button class="page-turn" type="button" data-book-go="skills"><span id="nextPageText">Next: my skills</span> <span aria-hidden="true">→</span></button></div>
           </div>
           <div id="skillsPage" class="book-page" role="tabpanel" aria-labelledby="skillsTab" tabindex="0" hidden>
             <div class="book-page-top"><div class="eyebrow" id="skillsEyebrow">🧠 skills.json</div><span class="book-stamp">SASAM / 02</span></div>
             <div class="skills-intro"><div><div class="profile-kicker">THE TOOLBOX</div><h3 id="skillsPageTitle">Things I bring to the table ✨</h3><p id="skillsPageSubtitle">A little bit of code, community &amp; curiosity.</p></div><div class="skills-doodle" aria-hidden="true">✳</div></div>
             <div class="skill-groups book-skill-groups" id="skillGroups"></div>
-            <div class="book-footer"><button class="page-turn page-back" type="button" data-book-go="bio"><span aria-hidden="true">←</span> <span id="prevPageText">Back: about me</span></button><span class="page-number">02 / 02</span></div>
+            <div class="book-footer"><button class="page-turn page-back" type="button" data-book-go="bio"><span aria-hidden="true">←</span> <span id="prevPageText">Back: about me</span></button><span class="page-number">02 / 03</span><button class="page-turn" type="button" data-book-go="guest"><span id="nextGuestText">Next: guestbook</span> <span aria-hidden="true">→</span></button></div>
+          </div>
+          <div id="guestPage" class="book-page" role="tabpanel" aria-labelledby="guestTab" tabindex="0" hidden>
+            <div class="book-page-top"><div class="eyebrow" id="guestEyebrow">💌 guestbook.txt</div><span class="book-stamp">SASAM / 03</span></div>
+            <div class="guest-intro"><div class="profile-kicker">A NOTE FOR SASAM</div><h3 id="guestTitle">Leave a little note 💌</h3><p id="guestSubtitle">A kind word, an idea, or a suggestion—I'd love to hear it!</p></div>
+            <form id="guestForm" class="guest-form">
+              <div class="guest-field"><label for="guestName" id="guestNameLabel">Your name <span>(optional)</span></label><input id="guestName" type="text" maxlength="40" autocomplete="nickname" placeholder="Anonymous"></div>
+              <div class="guest-field"><label for="guestMessage" id="guestMessageLabel">Your message</label><textarea id="guestMessage" rows="3" maxlength="500" required placeholder="Write something nice or share an idea..."></textarea></div>
+              <p id="guestPrivacy" class="guest-privacy">🌍 This is public. Please don't share personal or sensitive information.</p>
+              <div class="guest-actions"><button class="page-turn guest-submit" id="guestSubmit" type="submit">Send note ↗</button><span id="guestStatus" role="status" aria-live="polite"></span></div>
+            </form>
+            <div class="guest-list-heading"><h4 id="guestListTitle">Notes from visitors</h4><span id="guestListHint">Latest 50</span></div>
+            <div id="guestMessages" class="guest-messages" aria-live="polite"></div>
+            <div class="book-footer"><button class="page-turn page-back" type="button" data-book-go="skills"><span aria-hidden="true">←</span> <span id="backSkillsText">Back: my skills</span></button><span class="page-number">03 / 03</span></div>
           </div>
         </div>
       </div>
@@ -504,6 +530,7 @@ const translations = [
  ['.bio-copy p:nth-of-type(2)','Aku juga pernah menjadi <b>moderator di beberapa proyek crypto dan NFT</b>, membantu menjaga komunitas tetap aktif dan nyaman. Selain itu, aku sering mengikuti <b>hackathon</b> untuk bereksperimen, bertemu orang-orang kreatif, dan membangun sesuatu dalam waktu singkat.'],
  ['.bio-copy p:nth-of-type(3)','Di luar Web3, aku suka membuat game, aplikasi web, dan eksperimen kecil yang kadang berguna, kadang cuma seru.'],
  ['.bio-copy p:nth-of-type(4)','<b>Ide liar, kode nyata, dan selalu ada proyek berikutnya. 🚀</b>'],
+ ['#guestTabText','Pesan'],['#nextGuestText','Berikutnya: pesan'],['#backSkillsText','Kembali: skillku'],['#guestTitle','Tinggalkan pesan 💌'],['#guestSubtitle','Kata semangat, ide, atau saran—aku senang mendengarnya!'],['#guestNameLabel','Nama <span>(opsional)</span>'],['#guestMessageLabel','Pesanmu'],['#guestPrivacy','🌍 Pesan ini publik. Jangan bagikan informasi pribadi atau sensitif.'],['#guestSubmit','Kirim pesan ↗'],['#guestListTitle','Pesan dari pengunjung'],['#guestListHint','50 terbaru'],
  ['#games .section-head h2','🎮 Game yang kubuat alih-alih tidur'],['#games .section-head p','Arcade, puzzle, stacking, dan simulasi santai — langsung main!'],
  ['#tools .section-head h2','🛠️ Tools &amp; aplikasi web'],['#tools .section-head p','Dashboard, tools berbantuan AI, dan hal-hal lain yang ternyata berguna.'],
  ['#wins .section-head h2','🏆 Koleksi prestasi'],['#wins .section-head p','Kemenangan acara, peringkat hackathon, dan piala lainnya.'],
@@ -524,6 +551,9 @@ function applyLanguage(){
   if(typeof renderStatic==='function') renderStatic();
   if(typeof renderProjects==='function') renderProjects();
   if(typeof renderWins==='function') renderWins();
+  if(typeof renderGuestbook==='function') renderGuestbook();
+  document.getElementById('guestName').placeholder=language==='id'?'Anonim':'Anonymous';
+  document.getElementById('guestMessage').placeholder=language==='id'?'Tulis kata semangat atau bagikan idemu...':'Write something nice or share an idea...';
 }
 function applyTheme(){const dark=document.body.classList.toggle('dark',localStorage.getItem('sasam-theme')==='dark');const btn=document.getElementById('themeBtn');btn.textContent=dark?'☀️':'🌙';btn.setAttribute('aria-label',dark?'Light mode':'Dark mode');}
 document.getElementById('langBtn').addEventListener('click',()=>{language=language==='en'?'id':'en';localStorage.setItem('sasam-language',language);applyLanguage()});
@@ -885,7 +915,7 @@ function setAdminUI(loggedIn){
 async function initAuth(){
   const { data: { session } } = await sb.auth.getSession();
   setAdminUI(session?.user?.id === ADMIN_ID);
-  sb.auth.onAuthStateChange((_e, session) => { setAdminUI(session?.user?.id === ADMIN_ID); renderProjects(); renderWins(); });
+  sb.auth.onAuthStateChange((_e, session) => { setAdminUI(session?.user?.id === ADMIN_ID); renderProjects(); renderWins(); renderGuestbook(); });
 }
 adminBtn.addEventListener('click', async ()=>{
   if(isAdmin){ if(confirm('Log out of admin mode?')) await sb.auth.signOut(); return; }
@@ -907,22 +937,60 @@ document.getElementById('loginConfirm').addEventListener('click', async ()=>{
   loginOverlay.classList.remove('show'); reactBlob();
 });
 
+/* ---------- public guestbook ---------- */
+let guestbookEntries = [], guestbookLoaded=false, guestbookLoadError=false;
+function renderGuestbook(){
+  const list=document.getElementById('guestMessages'); list.replaceChildren();
+  if(!guestbookLoaded || guestbookLoadError || !guestbookEntries.length){
+    const msg=document.createElement('p'); msg.className='guest-empty';
+    msg.textContent=!guestbookLoaded?(language==='id'?'Memuat pesan...':'Loading notes...'):guestbookLoadError?(language==='id'?'Pesan belum bisa dimuat. Coba muat ulang halaman.':'Could not load notes. Please reload the page.'):(language==='id'?'Belum ada pesan. Jadilah yang pertama!':'No notes yet. Be the first!');list.appendChild(msg);return;
+  }
+  guestbookEntries.forEach(entry=>{
+    const note=document.createElement('article');note.className='guest-note';
+    const head=document.createElement('div');head.className='guest-note-head';
+    const name=document.createElement('strong');name.textContent=entry.display_name;
+    const date=document.createElement('time');const dt=new Date(entry.created_at);if(!Number.isNaN(dt.getTime())){date.dateTime=dt.toISOString();date.textContent=dt.toLocaleDateString(language==='id'?'id-ID':'en-GB',{day:'numeric',month:'short',year:'numeric'})};
+    head.append(name,date);const body=document.createElement('p');body.textContent=entry.message;note.append(head,body);
+    if(isAdmin){const del=document.createElement('button');del.className='guest-delete';del.type='button';del.textContent=language==='id'?'Hapus pesan':'Delete note';del.addEventListener('click',async()=>{
+      if(!isAdmin || !confirm(language==='id'?'Hapus pesan ini?':'Delete this note?')) return;del.disabled=true;
+      try{const {error}=await sb.from('portfolio_guestbook').delete().eq('id',entry.id);if(error)throw error;guestbookEntries=guestbookEntries.filter(x=>x.id!==entry.id);renderGuestbook()}
+      catch(error){alert((language==='id'?'Gagal menghapus: ':'Could not delete: ')+error.message);del.disabled=false}
+    });note.appendChild(del)}
+    list.appendChild(note);
+  });
+}
+document.getElementById('guestForm').addEventListener('submit',async event=>{
+  event.preventDefault();const nameEl=document.getElementById('guestName'), messageEl=document.getElementById('guestMessage');
+  const name=nameEl.value.trim() || (language==='id'?'Anonim':'Anonymous'), message=messageEl.value.trim(), status=document.getElementById('guestStatus'), submit=document.getElementById('guestSubmit');
+  if(!message){status.textContent=language==='id'?'Tulis pesan dulu, ya.':'Please write a message first.';return}
+  if(name.length>40 || message.length>500){status.textContent=language==='id'?'Pesan atau nama terlalu panjang.':'Your message or name is too long.';return}
+  submit.disabled=true;status.textContent=language==='id'?'Mengirim...':'Sending...';
+  try{
+    const {data,error}=await sb.from('portfolio_guestbook').insert({display_name:name,message}).select().single();if(error)throw error;
+    guestbookEntries=[data,...guestbookEntries].slice(0,50);guestbookLoaded=true;guestbookLoadError=false;renderGuestbook();
+    nameEl.value='';messageEl.value='';status.textContent=language==='id'?'Pesan terkirim. Terima kasih! 💛':'Note sent. Thank you! 💛';
+  }catch(error){console.error('Guestbook send failed:',error);status.textContent=language==='id'?'Gagal mengirim. Coba lagi nanti.':'Could not send. Please try again later.'}
+  finally{submit.disabled=false}
+});
+
 /* ---------- notebook pages ---------- */
+const bookPages=['bio','skills','guest'];
 function showBookPage(page, focusTab=false){
-  const isBio=page==='bio';
-  const bio=document.getElementById('bioPage'), skills=document.getElementById('skillsPage');
-  const bioTab=document.getElementById('bioTab'), skillsTab=document.getElementById('skillsTab');
-  bio.hidden=!isBio; skills.hidden=isBio;
-  [[bioTab,isBio],[skillsTab,!isBio]].forEach(([tab,selected])=>{tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1});
-  const active=isBio?bio:skills; active.classList.remove('is-turning'); void active.offsetWidth; active.classList.add('is-turning');
-  if(focusTab) (isBio?bioTab:skillsTab).focus();
+  if(!bookPages.includes(page)) return;
+  bookPages.forEach(name=>{
+    const selected=name===page, panel=document.getElementById(name+'Page'), tab=document.getElementById(name+'Tab');
+    panel.hidden=!selected; tab.setAttribute('aria-selected',String(selected)); tab.tabIndex=selected?0:-1;
+  });
+  const active=document.getElementById(page+'Page'); active.classList.remove('is-turning'); void active.offsetWidth; active.classList.add('is-turning');
+  if(focusTab) document.getElementById(page+'Tab').focus();
 }
 document.querySelectorAll('[data-book-page]').forEach(button=>{
   button.addEventListener('click',()=>showBookPage(button.dataset.bookPage));
   button.addEventListener('keydown',event=>{
-    if(event.key==='ArrowRight'||event.key==='ArrowLeft'||event.key==='Home'||event.key==='End'){
-      event.preventDefault(); const page=event.key==='Home'?'bio':event.key==='End'?'skills':(button.dataset.bookPage==='bio'?'skills':'bio'); showBookPage(page,true);
-    }
+    if(!['ArrowRight','ArrowLeft','Home','End'].includes(event.key)) return;
+    event.preventDefault(); const index=bookPages.indexOf(button.dataset.bookPage);
+    const next=event.key==='Home'?0:event.key==='End'?bookPages.length-1:(index+(event.key==='ArrowRight'?1:-1)+bookPages.length)%bookPages.length;
+    showBookPage(bookPages[next],true);
   });
 });
 document.querySelectorAll('[data-book-go]').forEach(button=>button.addEventListener('click',()=>showBookPage(button.dataset.bookGo,true)));
@@ -1005,7 +1073,8 @@ spawnDoodles();
 
 (async function bootstrap(){
   await initAuth();
-  const [projects, overrides, winsData, projectData, orderData] = await Promise.all([fetchCustomProjects(), fetchThumbnailOverrides(), fetchWins(), sb.from('portfolio_project_overrides').select('*'), sb.from('portfolio_project_order').select('*')]);
+  const [projects, overrides, winsData, projectData, orderData, guestData] = await Promise.all([fetchCustomProjects(), fetchThumbnailOverrides(), fetchWins(), sb.from('portfolio_project_overrides').select('*'), sb.from('portfolio_project_order').select('*'), sb.from('portfolio_guestbook').select('id,display_name,message,created_at').order('created_at',{ascending:false}).limit(50)]);
+  guestbookLoaded=true;guestbookLoadError=!!guestData.error;guestbookEntries=guestData.data || [];renderGuestbook();
   if(orderData.error) console.error('Project order:', orderData.error);
   (orderData.data||[]).forEach(row=>{projectOrder[row.slug]=row.position});
   if(projectData.error) console.error('Project overrides:', projectData.error);
