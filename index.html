@@ -334,6 +334,16 @@
   body.dark .guest-form{background:#342d40;border-color:rgba(244,233,252,.35)}
   @media(max-width:640px){.notebook-tabs{padding-left:10px;gap:3px}.book-tab{padding-left:8px;padding-right:8px;font-size:10px;gap:4px}.book-tab span:first-child{font-size:9px}.guest-form{padding:12px}.guest-note{padding:10px}.book-footer{gap:5px;flex-wrap:wrap}.book-footer .page-turn{font-size:10px}}
 
+
+  .emoji-picker{margin-top:10px;padding:10px 11px;border:1.5px solid rgba(43,32,54,.18);border-radius:12px;background:#fff6ec}
+  .emoji-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font:700 10px var(--mono);color:#925077}
+  .emoji-heading span:last-child{font-size:17px;line-height:1;color:#e6639e}
+  .emoji-list{display:flex;flex-wrap:wrap;gap:5px}
+  .emoji-btn{display:inline-flex;align-items:center;justify-content:center;min-width:35px;height:35px;padding:0;border:1.5px solid transparent;border-radius:9px;background:transparent;cursor:pointer;font:21px/1 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;transition:background .15s,transform .15s}
+  .emoji-btn:hover{background:#ffe1ef;transform:translateY(-2px)}.emoji-btn:focus-visible{outline:3px solid var(--sky);outline-offset:1px;background:#ffe1ef}
+  body.dark .emoji-picker{background:#272031;border-color:rgba(244,233,252,.18)}body.dark .emoji-heading{color:#ffb6d5}body.dark .emoji-btn:hover,body.dark .emoji-btn:focus-visible{background:#544053}
+  @media(max-width:640px){.emoji-picker{padding:9px}.emoji-list{gap:3px}.emoji-btn{min-width:33px;height:34px;font-size:20px}}
+
 </style>
 </head>
 <body>
@@ -411,7 +421,9 @@
             <div class="guest-intro"><div class="profile-kicker">A NOTE FOR SASAM</div><h3 id="guestTitle">Leave a little note 💌</h3><p id="guestSubtitle">A kind word, an idea, or a suggestion—I'd love to hear it!</p></div>
             <form id="guestForm" class="guest-form">
               <div class="guest-field"><label for="guestName" id="guestNameLabel">Your name <span>(optional)</span></label><input id="guestName" type="text" maxlength="40" autocomplete="nickname" placeholder="Anonymous"></div>
-              <div class="guest-field"><label for="guestMessage" id="guestMessageLabel">Your message</label><textarea id="guestMessage" rows="3" maxlength="500" required placeholder="Write something nice or share an idea..."></textarea></div>
+              <div class="guest-field"><label for="guestMessage" id="guestMessageLabel">Your message</label><textarea id="guestMessage" rows="3" maxlength="500" required placeholder="Write something nice or share an idea..."></textarea>
+                <div class="emoji-picker" role="group" aria-labelledby="emojiPickerLabel"><div class="emoji-heading"><span id="emojiPickerLabel">Add a little emoji</span><span aria-hidden="true">♡</span></div><div class="emoji-list" id="emojiList"></div></div>
+              </div>
               <p id="guestPrivacy" class="guest-privacy">🌍 This is public. Please don't share personal or sensitive information.</p>
               <div class="guest-actions"><button class="page-turn guest-submit" id="guestSubmit" type="submit">Send note ↗</button><span id="guestStatus" role="status" aria-live="polite"></span></div>
             </form>
@@ -530,7 +542,7 @@ const translations = [
  ['.bio-copy p:nth-of-type(2)','Aku juga pernah menjadi <b>moderator di beberapa proyek crypto dan NFT</b>, membantu menjaga komunitas tetap aktif dan nyaman. Selain itu, aku sering mengikuti <b>hackathon</b> untuk bereksperimen, bertemu orang-orang kreatif, dan membangun sesuatu dalam waktu singkat.'],
  ['.bio-copy p:nth-of-type(3)','Di luar Web3, aku suka membuat game, aplikasi web, dan eksperimen kecil yang kadang berguna, kadang cuma seru.'],
  ['.bio-copy p:nth-of-type(4)','<b>Ide liar, kode nyata, dan selalu ada proyek berikutnya. 🚀</b>'],
- ['#guestTabText','Pesan'],['#nextGuestText','Berikutnya: pesan'],['#backSkillsText','Kembali: skillku'],['#guestTitle','Tinggalkan pesan 💌'],['#guestSubtitle','Kata semangat, ide, atau saran—aku senang mendengarnya!'],['#guestNameLabel','Nama <span>(opsional)</span>'],['#guestMessageLabel','Pesanmu'],['#guestPrivacy','🌍 Pesan ini publik. Jangan bagikan informasi pribadi atau sensitif.'],['#guestSubmit','Kirim pesan ↗'],['#guestListTitle','Pesan dari pengunjung'],['#guestListHint','50 terbaru'],
+ ['#guestTabText','Pesan'],['#nextGuestText','Berikutnya: pesan'],['#backSkillsText','Kembali: skillku'],['#guestTitle','Tinggalkan pesan 💌'],['#guestSubtitle','Kata semangat, ide, atau saran—aku senang mendengarnya!'],['#guestNameLabel','Nama <span>(opsional)</span>'],['#guestMessageLabel','Pesanmu'],['#emojiPickerLabel','Tambahkan emoji lucu'],['#guestPrivacy','🌍 Pesan ini publik. Jangan bagikan informasi pribadi atau sensitif.'],['#guestSubmit','Kirim pesan ↗'],['#guestListTitle','Pesan dari pengunjung'],['#guestListHint','50 terbaru'],
  ['#games .section-head h2','🎮 Game yang kubuat alih-alih tidur'],['#games .section-head p','Arcade, puzzle, stacking, dan simulasi santai — langsung main!'],
  ['#tools .section-head h2','🛠️ Tools &amp; aplikasi web'],['#tools .section-head p','Dashboard, tools berbantuan AI, dan hal-hal lain yang ternyata berguna.'],
  ['#wins .section-head h2','🏆 Koleksi prestasi'],['#wins .section-head p','Kemenangan acara, peringkat hackathon, dan piala lainnya.'],
@@ -552,6 +564,7 @@ function applyLanguage(){
   if(typeof renderProjects==='function') renderProjects();
   if(typeof renderWins==='function') renderWins();
   if(typeof renderGuestbook==='function') renderGuestbook();
+  if(typeof renderEmojiPicker==='function') renderEmojiPicker();
   document.getElementById('guestName').placeholder=language==='id'?'Anonim':'Anonymous';
   document.getElementById('guestMessage').placeholder=language==='id'?'Tulis kata semangat atau bagikan idemu...':'Write something nice or share an idea...';
 }
@@ -936,6 +949,27 @@ document.getElementById('loginConfirm').addEventListener('click', async ()=>{
   if(session?.user?.id !== ADMIN_ID){await sb.auth.signOut();errEl.textContent='This account is not an administrator.';errEl.style.display='block';return;}
   loginOverlay.classList.remove('show'); reactBlob();
 });
+
+/* ---------- cute guestbook emoji picker ---------- */
+const guestEmojiChoices = [
+  ['❤️','red heart','hati merah'],['🩷','pink heart','hati merah muda'],['💖','sparkling heart','hati berkilau'],['💕','two hearts','dua hati'],
+  ['🫶','heart hands','tangan membentuk hati'],['🥰','smiling face with hearts','wajah tersenyum dengan hati'],['🥹','touched face','wajah terharu'],['🤗','hugging face','wajah memeluk'],
+  ['🐱','cat','kucing'],['🐻','bear','beruang'],['🐣','chick','anak ayam'],['✨','sparkles','kilauan'],['🌸','flower','bunga'],['🌈','rainbow','pelangi']
+];
+function renderEmojiPicker(){
+  const list=document.getElementById('emojiList');list.replaceChildren();
+  guestEmojiChoices.forEach(([emoji,en,id])=>{
+    const button=document.createElement('button');button.type='button';button.className='emoji-btn';button.textContent=emoji;
+    const label=(language==='id'?'Tambahkan emoji ':'Insert ')+(language==='id'?id:en);button.setAttribute('aria-label',label);button.title=label;
+    button.addEventListener('click',()=>{
+      const field=document.getElementById('guestMessage'), status=document.getElementById('guestStatus');
+      const start=field.selectionStart ?? field.value.length, end=field.selectionEnd ?? start;
+      if(field.value.length-(end-start)+emoji.length>field.maxLength){status.textContent=language==='id'?'Pesan sudah mencapai batas 500 karakter.':'Message has reached the 500-character limit.';field.focus();return}
+      field.setRangeText(emoji,start,end,'end');field.dispatchEvent(new Event('input',{bubbles:true}));status.textContent='';field.focus();
+    });
+    list.appendChild(button);
+  });
+}
 
 /* ---------- public guestbook ---------- */
 let guestbookEntries = [], guestbookLoaded=false, guestbookLoadError=false;
