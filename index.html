@@ -257,6 +257,17 @@
   body.dark .add-card:hover{color:#2B2036}
   @media(max-width:640px){nav{gap:8px;padding:12px 14px}.logo{font-size:20px}.nav-actions{gap:5px}.pref-btn,#adminBtn{padding:7px 9px;font-size:11px}.rope-cat-wrap{z-index:2}}
 
+
+  .profile-intro{display:flex;align-items:center;gap:17px;margin:4px 0 20px}
+  .profile-photo{width:94px;height:94px;object-fit:cover;border:3px solid var(--ink);border-radius:28px;box-shadow:4px 4px 0 var(--ink);transform:rotate(-4deg);background:#3fe0a0;flex:none}
+  .profile-intro h3{font-size:23px;line-height:1.15;margin-top:5px}
+  .profile-kicker{font:700 10px var(--mono);color:var(--pink-deep);letter-spacing:.05em}
+  .card-actions{flex-wrap:wrap}
+  .order-btn{display:none;align-items:center;justify-content:center;width:34px;height:34px;border:2.5px solid var(--ink);border-radius:10px;background:var(--cream-2);color:var(--ink);font-size:18px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+  body.is-admin .order-btn{display:inline-flex}
+  .order-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
+  .order-btn:focus-visible,.project-edit-btn:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+
 </style>
 </head>
 <body>
@@ -304,12 +315,11 @@
     <div class="about-grid">
       <div class="sticker-card about-text reveal">
         <div class="eyebrow">📄 about.js (mostly true)</div>
-        <p>I'm <b>SASAM</b> — I design and ship tiny, self-contained web experiences: arcade games,
-          puzzle toys, dashboards and AI-assisted tools. Everything lives in <b>one HTML file</b>,
-          deployed straight to the edge with zero ceremony.</p>
-        <p>I also build games in <b>Godot</b>, ship contracts &amp; dapps on <b>Solana and EVM chains</b>,
-          stay deep in <b>web3</b>, and make web apps for <b>school education</b>. Yes, that's a lot
-          of unrelated things. No, I'm not stopping.</p>
+        <div class="profile-intro"><img class="profile-photo" src="profile.jpg" alt="SASAM profile picture" width="400" height="400"><div><div class="profile-kicker">INDIE BUILDER · WEB3</div><h3>Hey, I'm SASAM 👋</h3></div></div>
+        <p>I'm an indie builder who enjoys turning ideas into digital products. My focus is <b>Web3 and blockchain</b>, from decentralized applications to tools for exploring the on-chain world.</p>
+        <p>I've also worked as a <b>moderator for several crypto and NFT projects</b>, helping keep communities active and welcoming. I enjoy joining <b>hackathons</b> too—a chance to experiment, meet creative people, and build something in a short amount of time.</p>
+        <p>Beyond Web3, I make games, web apps, and small experiments that are sometimes useful and sometimes just fun.</p>
+        <p><b>Wild ideas, real code, and always another project on the way. 🚀</b></p>
         <div class="tag-row" id="stackTags"></div>
       </div>
       <div class="sticker-card philosophy-card reveal">
@@ -424,8 +434,11 @@ const translations = [
  ['.hero .tagline','Aku membuat <b>game, tools, dan eksperimen browser yang sedikit nyeleneh</b> — kebanyakan bermodal ide dan JavaScript. Sentuh maskotnya, dia ramah!'],
  ['.stat-badge:nth-child(1)','🎮 <span id="statGames">–</span> game'],['.stat-badge:nth-child(2)','🛠️ <span id="statTools">–</span> tools'],['.stat-badge:nth-child(3)','🧱 0 langkah build'],
  ['.scroll-cue','👇 gulir untuk lebih banyak keseruan 👇'],['.about-text .eyebrow','📄 tentang.js (kurang lebih benar)'],
- ['.about-text p:nth-of-type(1)','Aku <b>SASAM</b> — aku merancang dan membuat pengalaman web mungil: game arcade, teka-teki, dashboard, dan tools berbantuan AI. Semuanya dalam <b>satu file HTML</b>, siap dimainkan tanpa ribet.'],
- ['.about-text p:nth-of-type(2)','Aku juga membuat game dengan <b>Godot</b>, kontrak dan dapp di <b>Solana dan jaringan EVM</b>, mendalami <b>web3</b>, serta membuat aplikasi web untuk <b>pendidikan</b>. Ya, banyak sekali. Dan aku belum mau berhenti.'],
+ ['.profile-intro h3','Hai, aku SASAM 👋'],
+ ['.about-text p:nth-of-type(1)','Aku seorang indie builder yang senang mengubah ide menjadi produk digital. Fokusku ada di <b>Web3 dan blockchain</b>, mulai dari aplikasi terdesentralisasi hingga tools untuk menjelajahi dunia on-chain.'],
+ ['.about-text p:nth-of-type(2)','Aku juga pernah menjadi <b>moderator di beberapa proyek crypto dan NFT</b>, membantu menjaga komunitas tetap aktif dan nyaman. Selain itu, aku sering mengikuti <b>hackathon</b> untuk bereksperimen, bertemu orang-orang kreatif, dan membangun sesuatu dalam waktu singkat.'],
+ ['.about-text p:nth-of-type(3)','Di luar Web3, aku suka membuat game, aplikasi web, dan eksperimen kecil yang kadang berguna, kadang cuma seru.'],
+ ['.about-text p:nth-of-type(4)','<b>Ide liar, kode nyata, dan selalu ada proyek berikutnya. 🚀</b>'],
  ['.philosophy-card p','Satu file HTML mandiri mengalahkan satu framework penuh.'],['.philosophy-card .who','— dev.philosophy, mungkin diteriakkan jam 2 pagi'],
  ['#games .section-head h2','🎮 Game yang kubuat alih-alih tidur'],['#games .section-head p','Arcade, puzzle, stacking, dan simulasi santai — langsung main!'],
  ['#tools .section-head h2','🛠️ Tools &amp; aplikasi web'],['#tools .section-head p','Dashboard, tools berbantuan AI, dan hal-hal lain yang ternyata berguna.'],
@@ -444,6 +457,7 @@ function applyLanguage(){
   if(language==='id') translations.forEach(([selector,html])=>{const el=document.querySelector(selector);if(el)el.innerHTML=html});
   document.documentElement.lang=language; document.getElementById('langBtn').textContent=language==='en'?'🇮🇩 ID':'🇬🇧 EN';
   document.getElementById('langBtn').setAttribute('aria-label',language==='en'?'Ganti ke Bahasa Indonesia':'Switch to English');
+  if(typeof renderStatic==='function') renderStatic();
   if(typeof renderProjects==='function') renderProjects();
   if(typeof renderWins==='function') renderWins();
 }
@@ -452,7 +466,7 @@ document.getElementById('langBtn').addEventListener('click',()=>{language=langua
 document.getElementById('themeBtn').addEventListener('click',()=>{localStorage.setItem('sasam-theme',document.body.classList.contains('dark')?'light':'dark');applyTheme()});
 applyTheme();
 /* ============ EDIT YOUR CONTENT HERE ============ */
-const SOCIALS = { x: "https://x.com/onadeonft", github: "#", itch: "#" };
+const SOCIALS = { x: "https://x.com/onadeonft", github: "https://github.com/onad1ocrypto", itch: "#" };
 
 /* Add an "image" URL to any item below to show a thumbnail instead of the placeholder icon,
    e.g. { name: "2048 Neon", url: "...", image: "https://your-image-host.com/2048.png" } */
@@ -477,13 +491,14 @@ const tools = [
   { name: "Wallet Intelligence Dashboard", url: "https://wallet-intelligence-dashboard-mu.vercel.app/", image: "" },
 ];
 
-const stack = ["JavaScript","Godot / GDScript","Solana","EVM / Solidity","Three.js","WebGL","Web Audio API"];
+const stack = ["TypeScript","JavaScript","HTML","CSS","Python","Godot / GDScript","Solana","EVM / Solidity"];
 const skillsData = [
-  ["languages", ["JavaScript","HTML","CSS","GDScript"]],
-  ["gameDev", ["Godot Engine","Three.js","WebGL","Canvas 2D","Web Audio API","synthesized 8-bit SFX"]],
-  ["gameDesign", ["puzzle","arcade / endless runner","stacking / reflex","word & match games","cozy sim"]],
-  ["web3 / blockchain", ["Solana","EVM chains","Solidity","smart contracts","dapps","on-chain dashboards"]],
-  ["toolsAndDashboards", ["AI-assisted tools","education / school web apps","data visualization","crypto dashboards"]],
+  ["languages & web", ["TypeScript","JavaScript","HTML","CSS","Python"]],
+  ["game development", ["Godot / GDScript","Three.js","WebGL","Canvas 2D","Web Audio API"]],
+  ["web3 / blockchain", ["Solana","EVM","Solidity","smart contracts","dApps"]],
+  ["community", ["crypto & NFT moderation"]],
+  ["events", ["hackathons"]],
+  ["tools & dashboards", ["AI-assisted tools","education web apps","data visualization","crypto dashboards"]],
   ["deployment", ["Vercel","Railway","Supabase"]],
 ];
 /* ================================================= */
@@ -496,6 +511,8 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let customProjects = { games: [], tools: [] };
 let isAdmin = false;
 let projectOverrides = {};
+let projectOrder = {};
+let orderSaving = false;
 const ADMIN_ID = '116a6157-e06d-4e3b-aeae-9fde9a3aa78a';
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function safeUrl(value){try{const u=new URL(value); return ['http:','https:'].includes(u.protocol) ? u.href : ''}catch{return ''}}
@@ -562,11 +579,18 @@ async function removeCustomProject(id){
   const { error } = await sb.from('portfolio_projects').delete().eq('id', id);
   if(error) throw error;
 }
-function getGamesList(){ return [...games, ...customProjects.games]; }
-function getToolsList(){ return [...tools, ...customProjects.tools]; }
+function orderedProjects(items,category){
+  return items.map((item,index)=>({item,index,position:projectOrder[slugify(category,item)]})).sort((a,b)=>{
+    const ap=Number.isFinite(a.position)?a.position:Number.MAX_SAFE_INTEGER;
+    const bp=Number.isFinite(b.position)?b.position:Number.MAX_SAFE_INTEGER;
+    return ap-bp || a.index-b.index;
+  }).map(entry=>entry.item);
+}
+function getGamesList(){ return orderedProjects([...games, ...customProjects.games],'games'); }
+function getToolsList(){ return orderedProjects([...tools, ...customProjects.tools],'tools'); }
 
 /* ---------- render ---------- */
-function cardHTML(item, category, idx){
+function cardHTML(item, category, idx, count){
   const slug = slugify(category, item);
   const d = item.custom ? item : {...item, ...(projectOverrides[slug] || {})};
   const link = safeUrl(d.url), displayUrl = link.replace(/^https?:\/\//,'').replace(/\/$/,'');
@@ -577,16 +601,18 @@ function cardHTML(item, category, idx){
     <div class="card-body"><div class="card-idx">#${String(idx+1).padStart(2,'0')}</div><h3>${esc(d.name)}</h3>
     ${d.description ? `<div class="project-desc">${esc(d.description)}</div>` : ''}<div class="url">${esc(displayUrl)}</div>
     <div class="card-actions">${link ? `<a class="open-link" href="${esc(link)}" target="_blank" rel="noopener noreferrer">▶ ${language==='id'?'buka':'open'}</a>` : ''}
-    <button class="project-edit-btn" data-edit-category="${category}" data-edit-index="${idx}">✎ ${language==='id'?'edit':'edit'}</button>${removeBtn}</div></div></div>`;
+    <button class="project-edit-btn" data-edit-category="${category}" data-edit-index="${idx}">✎ edit</button>
+    <button class="order-btn" data-order-category="${category}" data-order-index="${idx}" data-order-direction="-1" aria-label="${language==='id'?'Naikkan proyek':'Move project up'}" title="${language==='id'?'Naikkan':'Move up'}" ${idx===0 || orderSaving?'disabled':''}>↑</button>
+    <button class="order-btn" data-order-category="${category}" data-order-index="${idx}" data-order-direction="1" aria-label="${language==='id'?'Turunkan proyek':'Move project down'}" title="${language==='id'?'Turunkan':'Move down'}" ${idx===count-1 || orderSaving?'disabled':''}>↓</button>${removeBtn}</div></div></div>`;
 }
 
 function renderProjects(){
   const gList = getGamesList(), tList = getToolsList();
   document.getElementById('statGames').textContent = gList.length;
   document.getElementById('statTools').textContent = tList.length;
-  document.getElementById('gamesGrid').innerHTML = gList.map((g,i)=>cardHTML(g,'games',i)).join('')
+  document.getElementById('gamesGrid').innerHTML = gList.map((g,i)=>cardHTML(g,'games',i,gList.length)).join('')
     + `<div class="add-card" data-add-category="games"><span class="plus">＋</span>${language==='id'?'tambah game':'add a game'}</div>`;
-  document.getElementById('toolsGrid').innerHTML = tList.map((t,i)=>cardHTML(t,'tools',i)).join('')
+  document.getElementById('toolsGrid').innerHTML = tList.map((t,i)=>cardHTML(t,'tools',i,tList.length)).join('')
     + `<div class="add-card" data-add-category="tools"><span class="plus">＋</span>${language==='id'?'tambah proyek':'add a tool'}</div>`;
   bindCardEvents();
 }
@@ -626,8 +652,10 @@ function renderWins(){
 }
 function renderStatic(){
   document.getElementById('stackTags').innerHTML = stack.map(s=>`<span class="tag">${s}</span>`).join('');
+  const skillLabels = {'languages & web':'bahasa & web','game development':'pengembangan game','community':'komunitas','events':'kegiatan','tools & dashboards':'tools & dashboard','deployment':'deployment'};
+  const skillValues = {'crypto & NFT moderation':'moderasi crypto & NFT','hackathons':'hackathon','AI-assisted tools':'tools berbantuan AI','education web apps':'aplikasi web pendidikan','data visualization':'visualisasi data','crypto dashboards':'dashboard crypto'};
   document.getElementById('skillGroups').innerHTML = skillsData.map(([key,vals])=>`
-    <div class="skill-group reveal visible"><div class="key">${key}</div><div class="vals">${vals.map(v=>`<span class="tag">${v}</span>`).join('')}</div></div>`).join('');
+    <div class="skill-group reveal visible"><div class="key">${language==='id'?(skillLabels[key]||key):key}</div><div class="vals">${vals.map(v=>`<span class="tag">${language==='id'?(skillValues[v]||v):v}</span>`).join('')}</div></div>`).join('');
   document.getElementById('socialRow').innerHTML = `
     <a class="social-pill" href="${SOCIALS.x}" target="_blank" rel="noopener">𝕏 @onadeonft</a>
     <a class="social-pill" href="${SOCIALS.github}" target="_blank" rel="noopener">◆ GitHub</a>
@@ -646,6 +674,20 @@ function bindCardEvents(){
       }catch(e){ alert('Failed to remove: ' + e.message); btn.disabled = false; }
     });
   });
+  document.querySelectorAll('[data-order-index]').forEach(btn=>btn.addEventListener('click',async()=>{
+    if(!isAdmin || orderSaving) return;
+    const category=btn.dataset.orderCategory, index=Number(btn.dataset.orderIndex), direction=Number(btn.dataset.orderDirection);
+    const items=category==='games'?getGamesList():getToolsList(), target=index+direction;
+    if(target<0||target>=items.length) return;
+    [items[index],items[target]]=[items[target],items[index]];
+    const rows=items.map((item,position)=>({slug:slugify(category,item),position}));
+    orderSaving=true; renderProjects();
+    try{
+      const {error}=await sb.from('portfolio_project_order').upsert(rows,{onConflict:'slug'}); if(error) throw error;
+      rows.forEach(row=>{projectOrder[row.slug]=row.position});
+    }catch(err){alert((language==='id'?'Gagal mengubah urutan: ':'Could not update order: ')+err.message)}
+    finally{orderSaving=false;renderProjects();document.querySelector(`[data-order-category="${category}"][data-order-index="${target}"][data-order-direction="${direction}"]`)?.focus()}
+  }));
   document.querySelectorAll('[data-edit-index]').forEach(btn=>btn.addEventListener('click',()=>{if(isAdmin) openModal(btn.dataset.editCategory, Number(btn.dataset.editIndex));}));
   document.querySelectorAll('.edit-thumb-btn').forEach(btn=>{
     btn.addEventListener('click', (e)=>{
@@ -881,7 +923,9 @@ spawnDoodles();
 
 (async function bootstrap(){
   await initAuth();
-  const [projects, overrides, winsData, projectData] = await Promise.all([fetchCustomProjects(), fetchThumbnailOverrides(), fetchWins(), sb.from('portfolio_project_overrides').select('*')]);
+  const [projects, overrides, winsData, projectData, orderData] = await Promise.all([fetchCustomProjects(), fetchThumbnailOverrides(), fetchWins(), sb.from('portfolio_project_overrides').select('*'), sb.from('portfolio_project_order').select('*')]);
+  if(orderData.error) console.error('Project order:', orderData.error);
+  (orderData.data||[]).forEach(row=>{projectOrder[row.slug]=row.position});
   if(projectData.error) console.error('Project overrides:', projectData.error);
   (projectData.data || []).forEach(row=>{projectOverrides[row.slug]=row});
   customProjects = projects;
