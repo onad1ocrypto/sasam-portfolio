@@ -234,6 +234,29 @@
   .confetti{ position:fixed; width:9px; height:9px; z-index:200; pointer-events:none; border-radius:2px; }
 
   @media (max-width:640px){ .nav-links{ display:none; } section{ padding:64px 18px; } }
+
+  .nav-actions{display:flex;align-items:center;gap:8px}
+  .pref-btn{font:700 12px var(--mono);border:2.5px solid var(--ink);border-radius:20px;padding:8px 11px;background:var(--cream-2);color:var(--ink);cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+  .field textarea{width:100%;background:#fff;color:#2B2036;border:2.5px solid var(--ink);border-radius:10px;padding:10px 13px;font:600 14px var(--body);resize:vertical}
+  .field small{display:block;font-size:11px;line-height:1.4;margin-top:5px;opacity:.8}
+  .modal{max-height:90vh;overflow:auto}
+  .card-thumb video{width:100%;height:100%;object-fit:cover;display:block;background:#171320}
+  .project-edit-btn{display:none;align-items:center;justify-content:center;border:2.5px solid var(--ink);border-radius:10px;padding:6px 10px;background:var(--sky);color:#2B2036;cursor:pointer;font-weight:700;box-shadow:3px 3px 0 var(--ink)}
+  body.is-admin .project-edit-btn{display:inline-flex}
+  .project-desc{font-size:13px;line-height:1.5;margin-top:10px;overflow-wrap:anywhere;white-space:pre-wrap}
+  body.dark{--cream:#171421;--cream-2:#2b2438;--ink:#f4e9fc;--pink-deep:#ff9bc5;background:radial-gradient(circle at 12% 8%,rgba(185,140,255,.16),transparent 40%),radial-gradient(circle at 90% 15%,rgba(94,200,255,.12),transparent 42%),var(--cream);color:var(--ink)}
+  body.dark nav{background:rgba(23,20,33,.9)}
+  body.dark .card,body.dark .sticker-card:not(.philosophy-card),body.dark .social-pill,body.dark .modal{background:#292336;color:#f4e9fc}
+  body.dark .philosophy-card{background:#684b8c}
+  body.dark .tag{background:#3b3149}
+  body.dark .card-thumb.placeholder-thumb{background:repeating-linear-gradient(135deg,#30263b,#30263b 14px,#211c2c 14px,#211c2c 28px)}
+  body.dark .eyebrow,body.dark .stat-badge,body.dark .open-link,body.dark #adminBtn,body.dark .project-edit-btn,body.dark .modal-btn,body.dark .edit-thumb-btn,body.dark .remove-btn{color:#2B2036}
+  body.dark .stat-badge{background:#f5e9fa}
+  body.dark .stat-badge:nth-child(2){background:var(--yellow)}body.dark .stat-badge:nth-child(3){background:var(--mint)}
+  body.dark .speech-bubble{color:#2B2036}
+  body.dark .add-card:hover{color:#2B2036}
+  @media(max-width:640px){nav{gap:8px;padding:12px 14px}.logo{font-size:20px}.nav-actions{gap:5px}.pref-btn,#adminBtn{padding:7px 9px;font-size:11px}.rope-cat-wrap{z-index:2}}
+
 </style>
 </head>
 <body>
@@ -255,7 +278,7 @@
     <div class="nav-links">
       <a href="#about">About</a><a href="#games">Games</a><a href="#tools">Tools</a><a href="#wins">Wins</a><a href="#contact">Contact</a>
     </div>
-    <button id="adminBtn">🔐 admin</button>
+    <div class="nav-actions"><button id="langBtn" class="pref-btn" aria-label="Ganti bahasa / Change language">🇮🇩 ID</button><button id="themeBtn" class="pref-btn" aria-label="Toggle dark mode">🌙</button><button id="adminBtn">🔐 admin</button></div>
   </nav>
 
   <section class="hero" id="top">
@@ -343,7 +366,8 @@
     <h3 id="modalTitle">✨ Add new project</h3>
     <div class="field"><label>PROJECT NAME</label><input type="text" id="modalName" placeholder="e.g. Screaming Goat Simulator"></div>
     <div class="field"><label>PROJECT URL</label><input type="text" id="modalUrl" placeholder="https://..."></div>
-    <div class="field"><label>THUMBNAIL IMAGE (optional)</label><input type="file" id="modalImage" accept="image/*"></div>
+    <div class="field"><label id="descLabel" for="modalDesc">DESCRIPTION</label><textarea id="modalDesc" rows="3" placeholder="Tell visitors about your project"></textarea></div>
+    <div class="field"><label id="mediaLabel" for="modalImage">IMAGE OR VIDEO (optional)</label><input type="file" id="modalImage" accept="image/*,video/mp4,video/webm,video/ogg"><small id="mediaHelp">Max 25 MB. Leave empty to keep the current media.</small></div>
     <div class="modal-error" id="modalError">Fill in both fields with a valid URL, silly.</div>
     <div class="modal-actions">
       <button class="modal-btn cancel" id="modalCancel">nah</button>
@@ -393,6 +417,40 @@
 </div>
 
 <script>
+let language = localStorage.getItem('sasam-language') || 'en';
+const translations = [
+ ['.nav-links a[href="#about"]','Tentang'],['.nav-links a[href="#games"]','Game'],['.nav-links a[href="#tools"]','Proyek'],['.nav-links a[href="#wins"]','Prestasi'],['.nav-links a[href="#contact"]','Kontak'],
+ ['.hero .eyebrow','kreator indie · orang kocak profesional'],
+ ['.hero .tagline','Aku membuat <b>game, tools, dan eksperimen browser yang sedikit nyeleneh</b> — kebanyakan bermodal ide dan JavaScript. Sentuh maskotnya, dia ramah!'],
+ ['.stat-badge:nth-child(1)','🎮 <span id="statGames">–</span> game'],['.stat-badge:nth-child(2)','🛠️ <span id="statTools">–</span> tools'],['.stat-badge:nth-child(3)','🧱 0 langkah build'],
+ ['.scroll-cue','👇 gulir untuk lebih banyak keseruan 👇'],['.about-text .eyebrow','📄 tentang.js (kurang lebih benar)'],
+ ['.about-text p:nth-of-type(1)','Aku <b>SASAM</b> — aku merancang dan membuat pengalaman web mungil: game arcade, teka-teki, dashboard, dan tools berbantuan AI. Semuanya dalam <b>satu file HTML</b>, siap dimainkan tanpa ribet.'],
+ ['.about-text p:nth-of-type(2)','Aku juga membuat game dengan <b>Godot</b>, kontrak dan dapp di <b>Solana dan jaringan EVM</b>, mendalami <b>web3</b>, serta membuat aplikasi web untuk <b>pendidikan</b>. Ya, banyak sekali. Dan aku belum mau berhenti.'],
+ ['.philosophy-card p','Satu file HTML mandiri mengalahkan satu framework penuh.'],['.philosophy-card .who','— dev.philosophy, mungkin diteriakkan jam 2 pagi'],
+ ['#games .section-head h2','🎮 Game yang kubuat alih-alih tidur'],['#games .section-head p','Arcade, puzzle, stacking, dan simulasi santai — langsung main!'],
+ ['#tools .section-head h2','🛠️ Tools &amp; aplikasi web'],['#tools .section-head p','Dashboard, tools berbantuan AI, dan hal-hal lain yang ternyata berguna.'],
+ ['#wins .section-head h2','🏆 Koleksi prestasi'],['#wins .section-head p','Kemenangan acara, peringkat hackathon, dan piala lainnya.'],
+ ['#contact .eyebrow','📮 kontak.md'],['#contact h2','Punya proyek, game jam,<br>atau ide unik?'],['#contact p','Hubungi aku di sini. Aku akan merespons dengan penuh semangat.'],
+ ['footer','dibuat dengan 🍬 kekacauan dan satu file HTML — edit admin tersimpan dan terlihat oleh semua orang'],
+ ['label[for="modalDesc"]','DESKRIPSI'],['label[for="modalImage"]','GAMBAR ATAU VIDEO (opsional)'],['#mediaHelp','Maksimal 25 MB. Kosongkan untuk mempertahankan media saat ini.'],
+ ['#modalName + label',''],['#modalOverlay .field:nth-of-type(1) label','NAMA PROYEK'],['#modalOverlay .field:nth-of-type(2) label','LINK PROYEK'],['#modalCancel','batal'],['#modalConfirm','simpan'],
+ ['#loginOverlay h3','🔐 Login admin'],['#loginOverlay label','EMAIL'],['#loginOverlay .field:nth-of-type(2) label','KATA SANDI'],['#loginCancel','batal'],['#loginConfirm','masuk'],
+ ['#winModalOverlay h3','🏆 Tambah prestasi'],['#winModalOverlay .field:nth-of-type(1) label','ACARA / JUDUL'],['#winModalOverlay .field:nth-of-type(2) label','DESKRIPSI'],['#winModalOverlay .field:nth-of-type(3) label','LINK (opsional)'],['#winModalOverlay .field:nth-of-type(4) label','FOTO'],['#winCancel','batal'],['#winConfirm','tambah']
+];
+const english = new Map();
+translations.forEach(([selector])=>{const el=document.querySelector(selector); if(el && !english.has(el)) english.set(el,el.innerHTML)});
+function applyLanguage(){
+  english.forEach((original,el)=>el.innerHTML=original);
+  if(language==='id') translations.forEach(([selector,html])=>{const el=document.querySelector(selector);if(el)el.innerHTML=html});
+  document.documentElement.lang=language; document.getElementById('langBtn').textContent=language==='en'?'🇮🇩 ID':'🇬🇧 EN';
+  document.getElementById('langBtn').setAttribute('aria-label',language==='en'?'Ganti ke Bahasa Indonesia':'Switch to English');
+  if(typeof renderProjects==='function') renderProjects();
+  if(typeof renderWins==='function') renderWins();
+}
+function applyTheme(){const dark=document.body.classList.toggle('dark',localStorage.getItem('sasam-theme')==='dark');const btn=document.getElementById('themeBtn');btn.textContent=dark?'☀️':'🌙';btn.setAttribute('aria-label',dark?'Light mode':'Dark mode');}
+document.getElementById('langBtn').addEventListener('click',()=>{language=language==='en'?'id':'en';localStorage.setItem('sasam-language',language);applyLanguage()});
+document.getElementById('themeBtn').addEventListener('click',()=>{localStorage.setItem('sasam-theme',document.body.classList.contains('dark')?'light':'dark');applyTheme()});
+applyTheme();
 /* ============ EDIT YOUR CONTENT HERE ============ */
 const SOCIALS = { x: "https://x.com/onadeonft", github: "#", itch: "#" };
 
@@ -437,21 +495,28 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let customProjects = { games: [], tools: [] };
 let isAdmin = false;
+let projectOverrides = {};
+const ADMIN_ID = '116a6157-e06d-4e3b-aeae-9fde9a3aa78a';
+const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function safeUrl(value){try{const u=new URL(value); return ['http:','https:'].includes(u.protocol) ? u.href : ''}catch{return ''}}
+const isVideo = url => /\.(mp4|webm|ogv|ogg)(?:[?#]|$)/i.test(url || '');
 
 async function fetchCustomProjects(){
   const { data, error } = await sb.from('portfolio_projects').select('*').order('created_at', { ascending: true });
   if(error){ console.error('Supabase load error:', error); return { games: [], tools: [] }; }
   const result = { games: [], tools: [] };
-  (data || []).forEach(row => { if(!result[row.category]) result[row.category] = []; result[row.category].push({ id: row.id, name: row.name, url: row.url, image_url: row.image_url || '', custom: true }); });
+  (data || []).forEach(row => { if(!result[row.category]) result[row.category] = []; result[row.category].push({ id: row.id, name: row.name, url: row.url, image_url: row.image_url || '', description: row.description || '', custom: true }); });
   return result;
 }
-async function addCustomProject(category, name, url, imageUrl){
-  const { data, error } = await sb.from('portfolio_projects').insert({ category, name, url, image_url: imageUrl || null }).select().single();
+async function addCustomProject(category, name, url, imageUrl, description){
+  const { data, error } = await sb.from('portfolio_projects').insert({ category, name, url, image_url: imageUrl || null, description }).select().single();
   if(error) throw error;
-  return { id: data.id, name: data.name, url: data.url, image_url: data.image_url || '', custom: true };
+  return { id: data.id, name: data.name, url: data.url, image_url: data.image_url || '', description: data.description || '', custom: true };
 }
 async function uploadProjectImage(file){
-  const ext = file.name.split('.').pop().toLowerCase();
+  if (!/^(image\/|video\/(mp4|webm|ogg)$)/.test(file.type)) throw new Error('Unsupported media type');
+  if (file.size > 25 * 1024 * 1024) throw new Error('Maximum file size is 25 MB');
+  const ext = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,8) || (file.type.startsWith('image/') ? 'jpg' : 'mp4');
   const path = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
   const { error } = await sb.storage.from('project-images').upload(path, file);
   if(error) throw error;
@@ -502,55 +567,49 @@ function getToolsList(){ return [...tools, ...customProjects.tools]; }
 
 /* ---------- render ---------- */
 function cardHTML(item, category, idx){
-  const displayUrl = item.url.replace(/^https?:\/\//,'').replace(/\/$/,'');
-  const removeBtn = item.custom ? `<button class="remove-btn" data-remove-category="${category}" data-remove-id="${item.id}" title="Remove">✕</button>` : '';
   const slug = slugify(category, item);
-  const img = thumbnailOverrides[slug] || item.image_url || item.image;
-  const thumb = img
-    ? `<div class="card-thumb" data-slug="${slug}"><img src="${img}" alt="${item.name}" loading="lazy"><button class="edit-thumb-btn" data-slug="${slug}" title="Change thumbnail">✎</button></div>`
-    : `<div class="card-thumb placeholder-thumb" data-slug="${slug}">${category==='games' ? '🎮' : '🛠️'}<button class="edit-thumb-btn" data-slug="${slug}" title="Change thumbnail">✎</button></div>`;
-  return `<div class="card reveal visible">
-    ${thumb}
-    <div class="card-body">
-      <div class="card-idx">#${String(idx+1).padStart(2,'0')}</div>
-      <h3>${item.name}</h3>
-      <div class="url">${displayUrl}</div>
-      <div class="card-actions">
-        <a class="open-link" href="${item.url}" target="_blank" rel="noopener">▶ play</a>
-        ${removeBtn}
-      </div>
-    </div>
-  </div>`;
+  const d = item.custom ? item : {...item, ...(projectOverrides[slug] || {})};
+  const link = safeUrl(d.url), displayUrl = link.replace(/^https?:\/\//,'').replace(/\/$/,'');
+  const media = safeUrl((item.custom ? (thumbnailOverrides[slug] || d.image_url) : (projectOverrides[slug]?.image_url || thumbnailOverrides[slug] || d.image_url || d.image)) || '');
+  const thumbContent = media ? (isVideo(media) ? `<video src="${esc(media)}" muted loop autoplay playsinline preload="metadata"></video>` : `<img src="${esc(media)}" alt="${esc(d.name)}" loading="lazy">`) : (category==='games' ? '🎮' : '🛠️');
+  const removeBtn = item.custom ? `<button class="remove-btn" data-remove-category="${category}" data-remove-id="${esc(item.id)}" title="Remove">✕</button>` : '';
+  return `<div class="card reveal visible"><div class="card-thumb ${media ? '' : 'placeholder-thumb'}">${thumbContent}</div>
+    <div class="card-body"><div class="card-idx">#${String(idx+1).padStart(2,'0')}</div><h3>${esc(d.name)}</h3>
+    ${d.description ? `<div class="project-desc">${esc(d.description)}</div>` : ''}<div class="url">${esc(displayUrl)}</div>
+    <div class="card-actions">${link ? `<a class="open-link" href="${esc(link)}" target="_blank" rel="noopener noreferrer">▶ ${language==='id'?'buka':'open'}</a>` : ''}
+    <button class="project-edit-btn" data-edit-category="${category}" data-edit-index="${idx}">✎ ${language==='id'?'edit':'edit'}</button>${removeBtn}</div></div></div>`;
 }
+
 function renderProjects(){
   const gList = getGamesList(), tList = getToolsList();
   document.getElementById('statGames').textContent = gList.length;
   document.getElementById('statTools').textContent = tList.length;
   document.getElementById('gamesGrid').innerHTML = gList.map((g,i)=>cardHTML(g,'games',i)).join('')
-    + `<div class="add-card" data-add-category="games"><span class="plus">＋</span>add a game</div>`;
+    + `<div class="add-card" data-add-category="games"><span class="plus">＋</span>${language==='id'?'tambah game':'add a game'}</div>`;
   document.getElementById('toolsGrid').innerHTML = tList.map((t,i)=>cardHTML(t,'tools',i)).join('')
-    + `<div class="add-card" data-add-category="tools"><span class="plus">＋</span>add a tool</div>`;
+    + `<div class="add-card" data-add-category="tools"><span class="plus">＋</span>${language==='id'?'tambah proyek':'add a tool'}</div>`;
   bindCardEvents();
 }
 
 function winCardHTML(w){
-  const thumb = w.image_url
-    ? `<div class="card-thumb"><img src="${w.image_url}" alt="${w.title}" loading="lazy"></div>`
+  const winMedia = safeUrl(w.image_url);
+  const thumb = winMedia
+    ? `<div class="card-thumb"><img src="${esc(winMedia)}" alt="${esc(w.title)}" loading="lazy"></div>`
     : `<div class="card-thumb placeholder-thumb">🏆</div>`;
-  const removeBtn = `<button class="remove-btn" data-remove-win-id="${w.id}" title="Remove">✕</button>`;
-  const linkBtn = w.link ? `<a class="open-link" href="${w.link}" target="_blank" rel="noopener">🔗 proof</a>` : '';
+  const removeBtn = `<button class="remove-btn" data-remove-win-id="${esc(w.id)}" title="Remove">✕</button>`;
+  const linkBtn = safeUrl(w.link) ? `<a class="open-link" href="${esc(safeUrl(w.link))}" target="_blank" rel="noopener">🔗 proof</a>` : '';
   return `<div class="card reveal visible">
     ${thumb}
     <div class="card-body">
-      <h3>${w.title}</h3>
-      ${w.description ? `<div class="win-desc">${w.description}</div>` : ''}
+      <h3>${esc(w.title)}</h3>
+      ${w.description ? `<div class="win-desc">${esc(w.description)}</div>` : ''}
       <div class="card-actions">${linkBtn}${removeBtn}</div>
     </div>
   </div>`;
 }
 function renderWins(){
   document.getElementById('winsGrid').innerHTML = wins.map(winCardHTML).join('')
-    + `<div class="add-card" id="addWinCard"><span class="plus">＋</span>add a win</div>`;
+    + `<div class="add-card" id="addWinCard"><span class="plus">＋</span>${language==='id'?'tambah prestasi':'add a win'}</div>`;
   const addWinCard = document.getElementById('addWinCard');
   if(addWinCard) addWinCard.addEventListener('click', openWinModal);
   document.querySelectorAll('[data-remove-win-id]').forEach(btn=>{
@@ -576,7 +635,7 @@ function renderStatic(){
 }
 function bindCardEvents(){
   document.querySelectorAll('[data-add-category]').forEach(el=>{ el.addEventListener('click', ()=> openModal(el.dataset.addCategory)); });
-  document.querySelectorAll('.remove-btn').forEach(btn=>{
+  document.querySelectorAll('[data-remove-id]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       if(!isAdmin) return;
       btn.disabled = true;
@@ -587,6 +646,7 @@ function bindCardEvents(){
       }catch(e){ alert('Failed to remove: ' + e.message); btn.disabled = false; }
     });
   });
+  document.querySelectorAll('[data-edit-index]').forEach(btn=>btn.addEventListener('click',()=>{if(isAdmin) openModal(btn.dataset.editCategory, Number(btn.dataset.editIndex));}));
   document.querySelectorAll('.edit-thumb-btn').forEach(btn=>{
     btn.addEventListener('click', (e)=>{
       e.preventDefault(); e.stopPropagation();
@@ -602,38 +662,45 @@ const modalName = document.getElementById('modalName');
 const modalUrl = document.getElementById('modalUrl');
 const modalError = document.getElementById('modalError');
 const modalConfirm = document.getElementById('modalConfirm');
-let modalCategory = 'games';
+let modalCategory = 'games', editingItem = null;
 const modalImage = document.getElementById('modalImage');
-function openModal(category){
+const modalDesc = document.getElementById('modalDesc');
+function openModal(category, index=null){
+  if(!isAdmin) return;
   modalCategory = category;
-  document.getElementById('modalTitle').textContent = category === 'games' ? '✨ Add new game' : '✨ Add new tool';
-  modalName.value=''; modalUrl.value=''; modalImage.value=''; modalError.style.display='none';
+  const list = category==='games' ? getGamesList() : getToolsList();
+  editingItem = index === null ? null : list[index];
+  const d = editingItem && !editingItem.custom ? {...editingItem, ...(projectOverrides[slugify(category,editingItem)] || {})} : editingItem;
+  document.getElementById('modalTitle').textContent = editingItem ? (language==='id'?'✏️ Edit proyek':'✏️ Edit project') : (language==='id'?'✨ Tambah proyek':'✨ Add new project');
+  modalName.value=d?.name || ''; modalUrl.value=d?.url || ''; modalDesc.value=d?.description || ''; modalImage.value=''; modalError.style.display='none';
   modalOverlay.classList.add('show'); setTimeout(()=>modalName.focus(),50);
 }
 function closeModal(){ modalOverlay.classList.remove('show'); }
 document.getElementById('modalCancel').addEventListener('click', closeModal);
 modalOverlay.addEventListener('click', e=>{ if(e.target===modalOverlay) closeModal(); });
 modalConfirm.addEventListener('click', async (e)=>{
-  const name = modalName.value.trim();
-  const url = modalUrl.value.trim();
-  if(!name || !/^https?:\/\/.+\..+/.test(url)){ modalError.textContent = 'Fill in both fields with a valid URL, silly.'; modalError.style.display='block'; return; }
-  modalConfirm.disabled = true;
-  const originalLabel = modalConfirm.textContent;
+  if(!isAdmin) return;
+  const name = modalName.value.trim(), url = safeUrl(modalUrl.value.trim()), description = modalDesc.value.trim();
+  if(!name || !url){ modalError.textContent = language==='id'?'Isi nama dan URL yang valid (https:// atau http://).':'Enter a name and a valid URL (https:// or http://).'; modalError.style.display='block'; return; }
+  modalConfirm.disabled = true; const originalLabel = modalConfirm.textContent;
   try{
-    let imageUrl = '';
-    const file = modalImage.files[0];
-    if(file){
-      modalConfirm.textContent = 'uploading image...';
-      imageUrl = await uploadProjectImage(file);
+    const slug = editingItem ? slugify(modalCategory,editingItem) : null;
+    let media = editingItem ? (editingItem.custom ? (thumbnailOverrides[slug] || editingItem.image_url) : (projectOverrides[slug]?.image_url || thumbnailOverrides[slug] || editingItem.image || '')) : '';
+    if(modalImage.files[0]){ modalConfirm.textContent = language==='id'?'mengunggah...':'uploading...'; media = await uploadProjectImage(modalImage.files[0]); }
+    modalConfirm.textContent = language==='id'?'menyimpan...':'saving...';
+    if(!editingItem){ const entry = await addCustomProject(modalCategory,name,url,media,description); customProjects[modalCategory].push(entry); }
+    else if(editingItem.custom){
+      const {data,error}=await sb.from('portfolio_projects').update({name,url,description,image_url:media || null}).eq('id',editingItem.id).select().single(); if(error) throw error;
+      Object.assign(editingItem,{name:data.name,url:data.url,description:data.description||'',image_url:data.image_url||''});
+      if(modalImage.files[0] && thumbnailOverrides[slug]){await setThumbnailOverride(slug,media);thumbnailOverrides[slug]=media;}
+    } else {
+      const update={slug,name,url,description,image_url:media || null};
+      const {error}=await sb.from('portfolio_project_overrides').upsert(update); if(error) throw error;
+      projectOverrides[slug]=update;
     }
-    modalConfirm.textContent = 'saving...';
-    const entry = await addCustomProject(modalCategory, name, url, imageUrl);
-    customProjects[modalCategory].push(entry);
-    closeModal(); renderProjects();
-    burstConfetti(e.clientX, e.clientY);
-    reactBlob();
-  }catch(err){ modalError.textContent = 'Failed to save: ' + err.message; modalError.style.display='block'; }
-  finally{ modalConfirm.disabled = false; modalConfirm.textContent = originalLabel; }
+    closeModal(); renderProjects(); burstConfetti(e.clientX,e.clientY); reactBlob();
+  }catch(err){ modalError.textContent = (language==='id'?'Gagal menyimpan: ':'Failed to save: ') + err.message; modalError.style.display='block'; }
+  finally{ modalConfirm.disabled=false; modalConfirm.textContent=originalLabel; }
 });
 
 /* ---------- add win modal ---------- */
@@ -713,8 +780,8 @@ function setAdminUI(loggedIn){
 }
 async function initAuth(){
   const { data: { session } } = await sb.auth.getSession();
-  setAdminUI(!!session);
-  sb.auth.onAuthStateChange((_e, session) => { setAdminUI(!!session); renderProjects(); renderWins(); });
+  setAdminUI(session?.user?.id === ADMIN_ID);
+  sb.auth.onAuthStateChange((_e, session) => { setAdminUI(session?.user?.id === ADMIN_ID); renderProjects(); renderWins(); });
 }
 adminBtn.addEventListener('click', async ()=>{
   if(isAdmin){ if(confirm('Log out of admin mode?')) await sb.auth.signOut(); return; }
@@ -731,6 +798,8 @@ document.getElementById('loginConfirm').addEventListener('click', async ()=>{
   if(!email || !password){ errEl.textContent='Enter both email and password.'; errEl.style.display='block'; return; }
   const { error } = await sb.auth.signInWithPassword({ email, password });
   if(error){ errEl.textContent = 'Login failed: ' + error.message; errEl.style.display='block'; return; }
+  const {data:{session}}=await sb.auth.getSession();
+  if(session?.user?.id !== ADMIN_ID){await sb.auth.signOut();errEl.textContent='This account is not an administrator.';errEl.style.display='block';return;}
   loginOverlay.classList.remove('show'); reactBlob();
 });
 
@@ -805,13 +874,16 @@ function spawnDoodles(){
 
 /* ---------- boot ---------- */
 renderStatic();
+applyLanguage();
 renderProjects();
 observeReveals();
 spawnDoodles();
 
 (async function bootstrap(){
   await initAuth();
-  const [projects, overrides, winsData] = await Promise.all([fetchCustomProjects(), fetchThumbnailOverrides(), fetchWins()]);
+  const [projects, overrides, winsData, projectData] = await Promise.all([fetchCustomProjects(), fetchThumbnailOverrides(), fetchWins(), sb.from('portfolio_project_overrides').select('*')]);
+  if(projectData.error) console.error('Project overrides:', projectData.error);
+  (projectData.data || []).forEach(row=>{projectOverrides[row.slug]=row});
   customProjects = projects;
   thumbnailOverrides = overrides;
   wins = winsData;
