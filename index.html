@@ -268,6 +268,60 @@
   .order-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
   .order-btn:focus-visible,.project-edit-btn:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
 
+
+  .notebook-link{display:inline-flex;align-items:center;gap:9px;margin-top:28px;padding:11px 17px;border:2.5px solid var(--ink);border-radius:14px;background:var(--purple);color:#2b2036;font:700 12px var(--mono);text-decoration:none;box-shadow:4px 4px 0 var(--ink);transition:transform .15s,box-shadow .15s}
+  .notebook-link:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+  .notebook-link:focus-visible{outline:3px solid var(--pink);outline-offset:4px}
+  .hero .scroll-cue{margin-top:30px}
+  /* A two-page, spiral-bound profile notebook */
+  #about{max-width:1040px;padding-top:55px;padding-bottom:90px;scroll-margin-top:80px}
+  .notebook-heading{margin-bottom:25px}
+  .book-overline{font:700 11px var(--mono);letter-spacing:.13em;color:var(--pink-deep);margin-bottom:9px}
+  .notebook{position:relative;max-width:880px;margin:0 auto;padding:14px 14px 16px;background:var(--pink);border:3px solid var(--ink);border-radius:22px;box-shadow:8px 8px 0 var(--ink)}
+  .notebook-tabs{display:flex;gap:5px;padding-left:55px;align-items:flex-end;position:relative;z-index:2}
+  .book-tab{display:flex;align-items:center;gap:7px;border:2.5px solid var(--ink);border-bottom:0;border-radius:12px 12px 0 0;background:#e7d8f7;color:#2b2036;padding:10px 18px 12px;font:700 12px var(--mono);cursor:pointer;position:relative;top:2px}
+  .book-tab span:first-child{font-size:10px;opacity:.58}
+  .book-tab[aria-selected="true"]{background:#fffaf0;padding-top:13px;box-shadow:0 -3px 0 var(--yellow) inset}
+  .book-tab:focus-visible,.page-turn:focus-visible{outline:3px solid var(--sky);outline-offset:3px;z-index:3}
+  .notebook-paper{position:relative;background:#fffaf0;border:3px solid var(--ink);border-radius:12px 12px 15px 15px;box-shadow:3px 5px 0 rgba(43,32,54,.23);overflow:hidden}
+  .notebook-paper:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent 32px,rgba(116,157,190,.16) 33px,transparent 34px);opacity:.8}
+  .notebook-paper:after{content:"";position:absolute;top:0;bottom:0;left:64px;width:2px;background:rgba(232,105,133,.35);pointer-events:none}
+  .book-binding{position:absolute;z-index:1;left:16px;top:22px;bottom:22px;display:flex;flex-direction:column;justify-content:space-around;pointer-events:none}
+  .book-binding i{display:block;width:30px;height:12px;border:2px solid #382b40;border-radius:12px;background:linear-gradient(#fff,#8e8294 45%,#f6eef6);box-shadow:2px 2px 0 rgba(43,32,54,.23)}
+  .book-sheet{position:relative;z-index:1;padding:30px 40px 24px 90px;color:#2b2036;min-height:480px}
+  .book-page[hidden]{display:none!important}
+  .book-page.is-turning{animation:notebookTurn .38s cubic-bezier(.2,.7,.3,1) both;transform-origin:left center}
+  @keyframes notebookTurn{from{opacity:.15;transform:perspective(1000px) rotateY(-14deg) translateX(12px)}to{opacity:1;transform:perspective(1000px) rotateY(0) translateX(0)}}
+  .book-page-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .book-stamp{font:700 10px var(--mono);letter-spacing:.08em;opacity:.5;padding-top:8px;white-space:nowrap}
+  .about-text .profile-intro{margin:6px 0 22px}
+  .book-page .eyebrow{margin-bottom:14px}
+  .bio-copy p{max-width:680px;line-height:1.75;margin-bottom:13px}
+  .book-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:26px;padding-top:18px;border-top:2px dashed rgba(43,32,54,.22)}
+  .page-number{font:700 11px var(--mono);opacity:.55}
+  .page-turn{border:2.5px solid #2b2036;border-radius:12px;background:var(--yellow);color:#2b2036;padding:10px 15px;font:700 12px var(--mono);cursor:pointer;box-shadow:3px 3px 0 #2b2036;transition:transform .15s,box-shadow .15s}
+  .page-turn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 #2b2036}
+  .page-back{background:var(--sky)}
+  .skills-intro{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 12px}
+  .skills-intro h3{font-size:clamp(22px,4vw,30px);line-height:1.2;margin:6px 0}
+  .skills-intro p{font-size:14px;font-weight:600;opacity:.7}
+  .skills-doodle{font-size:48px;color:var(--pink);transform:rotate(16deg)}
+  .book-skill-groups{gap:0}
+  .book-skill-groups .skill-group{border-color:rgba(43,32,54,.25);padding:12px 0;align-items:center}
+  .book-skill-groups .key{min-width:165px;color:#c23976}
+  .book-skill-groups .tag{background:#f4e5ff;border-color:#2b2036;color:#2b2036}
+  body.dark .notebook{background:#b45d88}
+  body.dark .notebook-paper,body.dark .book-tab[aria-selected="true"]{background-color:#292336}
+  body.dark .book-tab[aria-selected="true"]{color:#f4e9fc}
+  body.dark .notebook-paper:before{background:repeating-linear-gradient(to bottom,transparent 0,transparent 32px,rgba(160,174,218,.12) 33px,transparent 34px)}
+  body.dark .book-sheet{color:#f4e9fc}
+  body.dark .book-footer,body.dark .book-skill-groups .skill-group{border-color:rgba(244,233,252,.25)}
+  body.dark .book-skill-groups .key{color:#ff9bc5}
+  body.dark .book-skill-groups .tag{background:#42374f;color:#f4e9fc;border-color:#f4e9fc}
+  body.dark .book-page .eyebrow{color:#2b2036}
+  @media(max-width:640px){#about{padding-top:35px;padding-bottom:64px}.notebook{padding:9px;border-radius:18px}.notebook-tabs{padding-left:32px}.book-tab{padding:9px 12px 10px;font-size:11px}.notebook-paper:after{left:42px}.book-binding{left:7px}.book-binding i{width:25px;height:11px}.book-sheet{padding:23px 17px 20px 58px;min-height:0}.book-stamp{font-size:9px}.profile-photo{width:74px;height:74px;border-radius:22px}.profile-intro{gap:13px}.profile-intro h3{font-size:20px}.bio-copy p{font-size:14px;line-height:1.75}.book-skill-groups .skill-group{gap:8px}.book-skill-groups .key{width:100%;min-width:0}.book-skill-groups .tag{font-size:10px;padding:4px 9px}.page-turn{font-size:11px;padding:9px 10px}.skills-doodle{font-size:33px}}
+  @media(prefers-reduced-motion:reduce){.book-page.is-turning{animation:none}}
+
 </style>
 </head>
 <body>
@@ -308,24 +362,38 @@
       <div class="stat-badge">🛠️ <span id="statTools">–</span> tools</div>
       <div class="stat-badge">🧱 0 build steps</div>
     </div>
+    <a class="notebook-link" href="#about" id="notebookLink">📓 Open my notebook <span aria-hidden="true">↘</span></a>
     <div class="scroll-cue">👇 scroll for more chaos 👇</div>
   </section>
 
   <section id="about">
-    <div class="about-grid">
-      <div class="sticker-card about-text reveal">
-        <div class="eyebrow">📄 about.js (mostly true)</div>
-        <div class="profile-intro"><img class="profile-photo" src="profile.jpg" alt="SASAM profile picture" width="400" height="400"><div><div class="profile-kicker">INDIE BUILDER · WEB3</div><h3>Hey, I'm SASAM 👋</h3></div></div>
-        <p>I'm an indie builder who enjoys turning ideas into digital products. My focus is <b>Web3 and blockchain</b>, from decentralized applications to tools for exploring the on-chain world.</p>
-        <p>I've also worked as a <b>moderator for several crypto and NFT projects</b>, helping keep communities active and welcoming. I enjoy joining <b>hackathons</b> too—a chance to experiment, meet creative people, and build something in a short amount of time.</p>
-        <p>Beyond Web3, I make games, web apps, and small experiments that are sometimes useful and sometimes just fun.</p>
-        <p><b>Wild ideas, real code, and always another project on the way. 🚀</b></p>
-        <div class="tag-row" id="stackTags"></div>
+    <div class="section-head reveal notebook-heading"><div class="book-overline">✦ A LITTLE MORE ABOUT ME ✦</div><h2 id="notebookTitle">📓 My notebook</h2><p id="notebookSubtitle">A little introduction, one page at a time.</p></div>
+    <div class="notebook reveal" aria-labelledby="notebookTitle">
+      <div class="notebook-tabs" role="tablist" aria-label="Notebook pages">
+        <button type="button" class="book-tab" id="bioTab" role="tab" aria-selected="true" aria-controls="bioPage" tabindex="0" data-book-page="bio"><span>01</span> <span id="bioTabText">About me</span></button>
+        <button type="button" class="book-tab" id="skillsTab" role="tab" aria-selected="false" aria-controls="skillsPage" tabindex="-1" data-book-page="skills"><span>02</span> <span id="skillsTabText">My skills</span></button>
       </div>
-      <div class="sticker-card philosophy-card reveal">
-        <div class="quote-mark">"</div>
-        <p>One self-contained HTML file beats a whole framework.</p>
-        <div class="who">— dev.philosophy, probably shouted at 2am</div>
+      <div class="notebook-paper">
+        <div class="book-binding" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="book-sheet">
+          <div id="bioPage" class="book-page about-text" role="tabpanel" aria-labelledby="bioTab" tabindex="0">
+            <div class="book-page-top"><div class="eyebrow">📄 about.js (mostly true)</div><span class="book-stamp">SASAM / 01</span></div>
+            <div class="profile-intro"><img class="profile-photo" src="profile.jpg" alt="SASAM profile picture" width="400" height="400"><div><div class="profile-kicker">INDIE BUILDER · WEB3</div><h3>Hey, I'm SASAM 👋</h3></div></div>
+            <div class="bio-copy">
+              <p>I'm an indie builder who enjoys turning ideas into digital products. My focus is <b>Web3 and blockchain</b>, from decentralized applications to tools for exploring the on-chain world.</p>
+              <p>I've also worked as a <b>moderator for several crypto and NFT projects</b>, helping keep communities active and welcoming. I enjoy joining <b>hackathons</b> too—a chance to experiment, meet creative people, and build something in a short amount of time.</p>
+              <p>Beyond Web3, I make games, web apps, and small experiments that are sometimes useful and sometimes just fun.</p>
+              <p><b>Wild ideas, real code, and always another project on the way. 🚀</b></p>
+            </div>
+            <div class="book-footer"><span class="page-number">01 / 02</span><button class="page-turn" type="button" data-book-go="skills"><span id="nextPageText">Next: my skills</span> <span aria-hidden="true">→</span></button></div>
+          </div>
+          <div id="skillsPage" class="book-page" role="tabpanel" aria-labelledby="skillsTab" tabindex="0" hidden>
+            <div class="book-page-top"><div class="eyebrow" id="skillsEyebrow">🧠 skills.json</div><span class="book-stamp">SASAM / 02</span></div>
+            <div class="skills-intro"><div><div class="profile-kicker">THE TOOLBOX</div><h3 id="skillsPageTitle">Things I bring to the table ✨</h3><p id="skillsPageSubtitle">A little bit of code, community &amp; curiosity.</p></div><div class="skills-doodle" aria-hidden="true">✳</div></div>
+            <div class="skill-groups book-skill-groups" id="skillGroups"></div>
+            <div class="book-footer"><button class="page-turn page-back" type="button" data-book-go="bio"><span aria-hidden="true">←</span> <span id="prevPageText">Back: about me</span></button><span class="page-number">02 / 02</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -346,10 +414,6 @@
     <div class="grid" id="toolsGrid"></div>
   </section>
 
-  <section id="skills">
-    <div class="section-head reveal"><h2>🧠 skills.json</h2></div>
-    <div class="sticker-card skill-groups reveal" id="skillGroups"></div>
-  </section>
 
   <section id="wins">
     <div class="section-head reveal">
@@ -433,13 +497,13 @@ const translations = [
  ['.hero .eyebrow','kreator indie · orang kocak profesional'],
  ['.hero .tagline','Aku membuat <b>game, tools, dan eksperimen browser yang sedikit nyeleneh</b> — kebanyakan bermodal ide dan JavaScript. Sentuh maskotnya, dia ramah!'],
  ['.stat-badge:nth-child(1)','🎮 <span id="statGames">–</span> game'],['.stat-badge:nth-child(2)','🛠️ <span id="statTools">–</span> tools'],['.stat-badge:nth-child(3)','🧱 0 langkah build'],
- ['.scroll-cue','👇 gulir untuk lebih banyak keseruan 👇'],['.about-text .eyebrow','📄 tentang.js (kurang lebih benar)'],
+ ['#notebookLink','📓 Buka buku catatanku <span aria-hidden="true">↘</span>'],['.scroll-cue','👇 gulir untuk lebih banyak keseruan 👇'],['.about-text .eyebrow','📄 tentang.js (kurang lebih benar)'],
+ ['.book-overline','✦ KENALAN LEBIH DEKAT ✦'],['#notebookTitle','📓 Buku catatanku'],['#notebookSubtitle','Kenalan sedikit demi sedikit, satu halaman demi satu halaman.'],['#bioTabText','Tentangku'],['#skillsTabText','Skillku'],['#nextPageText','Selanjutnya: skillku'],['#prevPageText','Kembali: tentangku'],['#skillsPageTitle','Hal-hal yang bisa kulakukan ✨'],['#skillsPageSubtitle','Sedikit kode, komunitas, dan rasa ingin tahu.'],
  ['.profile-intro h3','Hai, aku SASAM 👋'],
- ['.about-text p:nth-of-type(1)','Aku seorang indie builder yang senang mengubah ide menjadi produk digital. Fokusku ada di <b>Web3 dan blockchain</b>, mulai dari aplikasi terdesentralisasi hingga tools untuk menjelajahi dunia on-chain.'],
- ['.about-text p:nth-of-type(2)','Aku juga pernah menjadi <b>moderator di beberapa proyek crypto dan NFT</b>, membantu menjaga komunitas tetap aktif dan nyaman. Selain itu, aku sering mengikuti <b>hackathon</b> untuk bereksperimen, bertemu orang-orang kreatif, dan membangun sesuatu dalam waktu singkat.'],
- ['.about-text p:nth-of-type(3)','Di luar Web3, aku suka membuat game, aplikasi web, dan eksperimen kecil yang kadang berguna, kadang cuma seru.'],
- ['.about-text p:nth-of-type(4)','<b>Ide liar, kode nyata, dan selalu ada proyek berikutnya. 🚀</b>'],
- ['.philosophy-card p','Satu file HTML mandiri mengalahkan satu framework penuh.'],['.philosophy-card .who','— dev.philosophy, mungkin diteriakkan jam 2 pagi'],
+ ['.bio-copy p:nth-of-type(1)','Aku seorang indie builder yang senang mengubah ide menjadi produk digital. Fokusku ada di <b>Web3 dan blockchain</b>, mulai dari aplikasi terdesentralisasi hingga tools untuk menjelajahi dunia on-chain.'],
+ ['.bio-copy p:nth-of-type(2)','Aku juga pernah menjadi <b>moderator di beberapa proyek crypto dan NFT</b>, membantu menjaga komunitas tetap aktif dan nyaman. Selain itu, aku sering mengikuti <b>hackathon</b> untuk bereksperimen, bertemu orang-orang kreatif, dan membangun sesuatu dalam waktu singkat.'],
+ ['.bio-copy p:nth-of-type(3)','Di luar Web3, aku suka membuat game, aplikasi web, dan eksperimen kecil yang kadang berguna, kadang cuma seru.'],
+ ['.bio-copy p:nth-of-type(4)','<b>Ide liar, kode nyata, dan selalu ada proyek berikutnya. 🚀</b>'],
  ['#games .section-head h2','🎮 Game yang kubuat alih-alih tidur'],['#games .section-head p','Arcade, puzzle, stacking, dan simulasi santai — langsung main!'],
  ['#tools .section-head h2','🛠️ Tools &amp; aplikasi web'],['#tools .section-head p','Dashboard, tools berbantuan AI, dan hal-hal lain yang ternyata berguna.'],
  ['#wins .section-head h2','🏆 Koleksi prestasi'],['#wins .section-head p','Kemenangan acara, peringkat hackathon, dan piala lainnya.'],
@@ -491,7 +555,6 @@ const tools = [
   { name: "Wallet Intelligence Dashboard", url: "https://wallet-intelligence-dashboard-mu.vercel.app/", image: "" },
 ];
 
-const stack = ["TypeScript","JavaScript","HTML","CSS","Python","Godot / GDScript","Solana","EVM / Solidity"];
 const skillsData = [
   ["languages & web", ["TypeScript","JavaScript","HTML","CSS","Python"]],
   ["game development", ["Godot / GDScript","Three.js","WebGL","Canvas 2D","Web Audio API"]],
@@ -651,7 +714,6 @@ function renderWins(){
   });
 }
 function renderStatic(){
-  document.getElementById('stackTags').innerHTML = stack.map(s=>`<span class="tag">${s}</span>`).join('');
   const skillLabels = {'languages & web':'bahasa & web','game development':'pengembangan game','community':'komunitas','events':'kegiatan','tools & dashboards':'tools & dashboard','deployment':'deployment'};
   const skillValues = {'crypto & NFT moderation':'moderasi crypto & NFT','hackathons':'hackathon','AI-assisted tools':'tools berbantuan AI','education web apps':'aplikasi web pendidikan','data visualization':'visualisasi data','crypto dashboards':'dashboard crypto'};
   document.getElementById('skillGroups').innerHTML = skillsData.map(([key,vals])=>`
@@ -844,6 +906,26 @@ document.getElementById('loginConfirm').addEventListener('click', async ()=>{
   if(session?.user?.id !== ADMIN_ID){await sb.auth.signOut();errEl.textContent='This account is not an administrator.';errEl.style.display='block';return;}
   loginOverlay.classList.remove('show'); reactBlob();
 });
+
+/* ---------- notebook pages ---------- */
+function showBookPage(page, focusTab=false){
+  const isBio=page==='bio';
+  const bio=document.getElementById('bioPage'), skills=document.getElementById('skillsPage');
+  const bioTab=document.getElementById('bioTab'), skillsTab=document.getElementById('skillsTab');
+  bio.hidden=!isBio; skills.hidden=isBio;
+  [[bioTab,isBio],[skillsTab,!isBio]].forEach(([tab,selected])=>{tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1});
+  const active=isBio?bio:skills; active.classList.remove('is-turning'); void active.offsetWidth; active.classList.add('is-turning');
+  if(focusTab) (isBio?bioTab:skillsTab).focus();
+}
+document.querySelectorAll('[data-book-page]').forEach(button=>{
+  button.addEventListener('click',()=>showBookPage(button.dataset.bookPage));
+  button.addEventListener('keydown',event=>{
+    if(event.key==='ArrowRight'||event.key==='ArrowLeft'||event.key==='Home'||event.key==='End'){
+      event.preventDefault(); const page=event.key==='Home'?'bio':event.key==='End'?'skills':(button.dataset.bookPage==='bio'?'skills':'bio'); showBookPage(page,true);
+    }
+  });
+});
+document.querySelectorAll('[data-book-go]').forEach(button=>button.addEventListener('click',()=>showBookPage(button.dataset.bookGo,true)));
 
 /* ---------- scroll reveal ---------- */
 const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.15 });
