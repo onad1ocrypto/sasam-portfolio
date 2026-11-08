@@ -55,7 +55,7 @@
   @keyframes floaty{ 0%{ transform:translateY(0);} 50%{ transform:translateY(-40px);} 100%{ transform:translateY(0);} }
   @keyframes wobble{ 0%,100%{ rotate:-12deg;} 50%{ rotate:12deg;} }
 
-  .wrap{ position:relative; z-index:1; }
+  .wrap{ position:relative; z-index:auto; }
 
   /* nav */
   nav{
@@ -344,6 +344,43 @@
   body.dark .emoji-picker{background:#272031;border-color:rgba(244,233,252,.18)}body.dark .emoji-heading{color:#ffb6d5}body.dark .emoji-btn:hover,body.dark .emoji-btn:focus-visible{background:#544053}
   @media(max-width:640px){.emoji-picker{padding:9px}.emoji-list{gap:3px}.emoji-btn{min-width:33px;height:34px;font-size:20px}}
 
+
+  /* Mobile navigation and comfortably sized touch targets */
+  .mobile-menu-button,.mobile-menu{display:none}
+  section[id]{scroll-margin-top:85px}
+  .rope-cat-wrap{transition:opacity .2s ease}
+  @media(max-width:640px){
+    nav{gap:4px;padding:8px 10px}.logo{font-size:18px;gap:3px}.nav-actions{gap:4px}
+    .pref-btn,#adminBtn{min-height:44px;padding:7px 8px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+    #langBtn,#themeBtn{min-width:44px}#adminBtn{min-width:58px}
+    .mobile-menu-button{display:inline-flex;width:44px;min-width:44px;padding:0;font-size:20px;line-height:1;background:var(--sky);color:#2b2036}
+    .mobile-menu[hidden]{display:none!important}.mobile-menu:not([hidden]){display:flex;flex-direction:column;position:absolute;right:10px;top:calc(100% + 8px);width:min(250px,calc(100vw - 20px));padding:8px;background:var(--cream);border:3px solid var(--ink);border-radius:16px;box-shadow:5px 5px 0 var(--ink);z-index:60}
+    .mobile-menu a{display:flex;align-items:center;min-height:44px;padding:8px 12px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:700}
+    .mobile-menu a:hover,.mobile-menu a:focus-visible{background:var(--cream-2);outline:2px solid var(--pink)}
+    body.scrolled-away .rope-cat-wrap{opacity:0;pointer-events:none}
+    .book-tab{min-height:44px;font-size:11px}
+    .page-turn,.open-link,.modal-btn,.project-edit-btn,.order-btn,.remove-btn,.guest-delete{min-height:44px;min-width:44px}
+    .open-link{display:inline-flex;align-items:center;justify-content:center}
+    .emoji-btn{min-width:44px;height:44px;font-size:22px}
+    .guest-field input,.guest-field textarea,.field input,.field textarea{font-size:16px}
+    .guest-field label,.guest-privacy,.guest-list-heading span{font-size:12px}
+    .card .url{font-size:12px}
+    .book-sheet{padding-left:52px}
+  }
+  @media(max-width:390px){.book-tab span:first-child{display:none}.notebook-tabs{padding-left:5px}.book-tab{padding-left:9px;padding-right:9px}}
+  @media(prefers-reduced-motion:reduce){.rope-cat-wrap,.doodle,.hero h1,.blob,.scroll-cue{animation:none!important}}
+
+
+  @media(pointer:coarse){
+    #adminBtn,.pref-btn,.book-tab,.page-turn,.open-link,.modal-btn,.project-edit-btn,.order-btn,.remove-btn,.guest-delete{min-height:44px}
+    .order-btn,.remove-btn,.guest-delete,.pref-btn{min-width:44px}
+    .nav-links a{min-width:44px;justify-content:center}
+    .emoji-btn{min-width:44px;height:44px}
+    .guest-field input,.guest-field textarea,.field input,.field textarea{font-size:16px}
+    .nav-links a{display:inline-flex;align-items:center;min-height:44px}
+  }
+  @media(pointer:coarse) and (max-width:1024px){body.scrolled-away .rope-cat-wrap{opacity:0;pointer-events:none}}
+
 </style>
 </head>
 <body>
@@ -365,7 +402,10 @@
     <div class="nav-links">
       <a href="#about">About</a><a href="#games">Games</a><a href="#tools">Tools</a><a href="#wins">Wins</a><a href="#contact">Contact</a>
     </div>
-    <div class="nav-actions"><button id="langBtn" class="pref-btn" aria-label="Ganti bahasa / Change language">🇮🇩 ID</button><button id="themeBtn" class="pref-btn" aria-label="Toggle dark mode">🌙</button><button id="adminBtn">🔐 admin</button></div>
+    <div class="nav-actions"><button id="langBtn" class="pref-btn" aria-label="Ganti bahasa / Change language">🇮🇩 ID</button><button id="themeBtn" class="pref-btn" aria-label="Toggle dark mode">🌙</button><button id="adminBtn">🔐 admin</button><button id="mobileMenuButton" class="pref-btn mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenu"><span aria-hidden="true">☰</span></button></div>
+    <div class="mobile-menu" id="mobileMenu" hidden>
+      <a href="#about" id="mobileAbout">📓 About</a><a href="#games" id="mobileGames">🎮 Games</a><a href="#tools" id="mobileTools">🛠️ Tools</a><a href="#wins" id="mobileWins">🏆 Wins</a><a href="#contact" id="mobileContact">💌 Contact</a>
+    </div>
   </nav>
 
   <section class="hero" id="top">
@@ -532,6 +572,7 @@
 let language = localStorage.getItem('sasam-language') || 'en';
 const translations = [
  ['.nav-links a[href="#about"]','Tentang'],['.nav-links a[href="#games"]','Game'],['.nav-links a[href="#tools"]','Proyek'],['.nav-links a[href="#wins"]','Prestasi'],['.nav-links a[href="#contact"]','Kontak'],
+ ['#mobileAbout','📓 Tentang'],['#mobileGames','🎮 Game'],['#mobileTools','🛠️ Proyek'],['#mobileWins','🏆 Prestasi'],['#mobileContact','💌 Kontak'],
  ['.hero .eyebrow','kreator indie · orang kocak profesional'],
  ['.hero .tagline','Aku membuat <b>game, tools, dan eksperimen browser yang sedikit nyeleneh</b> — kebanyakan bermodal ide dan JavaScript. Sentuh maskotnya, dia ramah!'],
  ['.stat-badge:nth-child(1)','🎮 <span id="statGames">–</span> game'],['.stat-badge:nth-child(2)','🛠️ <span id="statTools">–</span> tools'],['.stat-badge:nth-child(3)','🧱 0 langkah build'],
@@ -565,6 +606,7 @@ function applyLanguage(){
   if(typeof renderWins==='function') renderWins();
   if(typeof renderGuestbook==='function') renderGuestbook();
   if(typeof renderEmojiPicker==='function') renderEmojiPicker();
+  if(typeof updateMobileMenuLabel==='function') updateMobileMenuLabel();
   document.getElementById('guestName').placeholder=language==='id'?'Anonim':'Anonymous';
   document.getElementById('guestMessage').placeholder=language==='id'?'Tulis kata semangat atau bagikan idemu...':'Write something nice or share an idea...';
 }
@@ -701,7 +743,7 @@ function cardHTML(item, category, idx, count){
   const d = item.custom ? item : {...item, ...(projectOverrides[slug] || {})};
   const link = safeUrl(d.url), displayUrl = link.replace(/^https?:\/\//,'').replace(/\/$/,'');
   const media = safeUrl((item.custom ? (thumbnailOverrides[slug] || d.image_url) : (projectOverrides[slug]?.image_url || thumbnailOverrides[slug] || d.image_url || d.image)) || '');
-  const thumbContent = media ? (isVideo(media) ? `<video src="${esc(media)}" muted loop autoplay playsinline preload="metadata"></video>` : `<img src="${esc(media)}" alt="${esc(d.name)}" loading="lazy">`) : (category==='games' ? '🎮' : '🛠️');
+  const thumbContent = media ? (isVideo(media) ? `<video data-src="${esc(media)}" muted loop playsinline preload="none" aria-label="${esc(d.name)}"></video>` : `<img src="${esc(media)}" alt="${esc(d.name)}" loading="lazy">`) : (category==='games' ? '🎮' : '🛠️');
   const removeBtn = item.custom ? `<button class="remove-btn" data-remove-category="${category}" data-remove-id="${esc(item.id)}" title="Remove">✕</button>` : '';
   return `<div class="card reveal visible"><div class="card-thumb ${media ? '' : 'placeholder-thumb'}">${thumbContent}</div>
     <div class="card-body"><div class="card-idx">#${String(idx+1).padStart(2,'0')}</div><h3>${esc(d.name)}</h3>
@@ -712,6 +754,17 @@ function cardHTML(item, category, idx, count){
     <button class="order-btn" data-order-category="${category}" data-order-index="${idx}" data-order-direction="1" aria-label="${language==='id'?'Turunkan proyek':'Move project down'}" title="${language==='id'?'Turunkan':'Move down'}" ${idx===count-1 || orderSaving?'disabled':''}>↓</button>${removeBtn}</div></div></div>`;
 }
 
+let projectVideoObserver=null;
+function observeProjectVideos(){
+  if(projectVideoObserver) projectVideoObserver.disconnect();
+  const videos=document.querySelectorAll('.card-thumb video[data-src]');
+  const play=video=>{if(!video.getAttribute('src')) video.src=video.dataset.src;const attempt=video.play();if(attempt && typeof attempt.catch==='function')attempt.catch(()=>{})};
+  if(!('IntersectionObserver' in window)){videos.forEach(play);return}
+  projectVideoObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{
+    if(entry.isIntersecting) play(entry.target); else if(entry.target.getAttribute('src')) entry.target.pause();
+  }),{rootMargin:'200px 0px'});
+  videos.forEach(video=>projectVideoObserver.observe(video));
+}
 function renderProjects(){
   const gList = getGamesList(), tList = getToolsList();
   document.getElementById('statGames').textContent = gList.length;
@@ -721,6 +774,7 @@ function renderProjects(){
   document.getElementById('toolsGrid').innerHTML = tList.map((t,i)=>cardHTML(t,'tools',i,tList.length)).join('')
     + `<div class="add-card" data-add-category="tools"><span class="plus">＋</span>${language==='id'?'tambah proyek':'add a tool'}</div>`;
   bindCardEvents();
+  observeProjectVideos();
 }
 
 function winCardHTML(w){
@@ -1006,6 +1060,24 @@ document.getElementById('guestForm').addEventListener('submit',async event=>{
   }catch(error){console.error('Guestbook send failed:',error);status.textContent=language==='id'?'Gagal mengirim. Coba lagi nanti.':'Could not send. Please try again later.'}
   finally{submit.disabled=false}
 });
+
+/* ---------- compact mobile navigation ---------- */
+const mobileMenuButton=document.getElementById('mobileMenuButton'), mobileMenu=document.getElementById('mobileMenu');
+function updateMobileMenuLabel(){
+  const open=mobileMenuButton.getAttribute('aria-expanded')==='true';
+  mobileMenuButton.setAttribute('aria-label',language==='id'?(open?'Tutup menu navigasi':'Buka menu navigasi'):(open?'Close navigation menu':'Open navigation menu'));
+}
+function setMobileMenu(open,restoreFocus=false){
+  mobileMenu.hidden=!open;mobileMenuButton.setAttribute('aria-expanded',String(open));updateMobileMenuLabel();
+  mobileMenuButton.firstElementChild.textContent=open?'✕':'☰';
+  if(restoreFocus) mobileMenuButton.focus();
+}
+mobileMenuButton.addEventListener('click',()=>setMobileMenu(mobileMenu.hidden));
+mobileMenu.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>setMobileMenu(false)));
+document.addEventListener('click',event=>{if(!mobileMenu.hidden&&!mobileMenu.contains(event.target)&&!mobileMenuButton.contains(event.target))setMobileMenu(false)});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!mobileMenu.hidden)setMobileMenu(false,true)});
+function updateRopeCatVisibility(){document.body.classList.toggle('scrolled-away',window.scrollY>80)}
+window.addEventListener('scroll',updateRopeCatVisibility,{passive:true});updateRopeCatVisibility();
 
 /* ---------- notebook pages ---------- */
 const bookPages=['bio','skills','guest'];
